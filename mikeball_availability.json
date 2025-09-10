@@ -1,0 +1,162 @@
+{
+  "scrapedAt": "2025-09-11T00:00:00Z",
+  "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+  "trips": [
+    {
+      "title": "3N Fly Dive Cod Hole – Ribbon Reefs",
+      "dateText": "05 May 2025",
+      "dateReturn": "08 May 2025",
+      "priceFromAUD": 3995,
+      "availability": "Available",
+      "cabinsLeft": 6,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 2, "priceAUD": 4995 },
+        { "type": "Standard", "available": 4, "priceAUD": 3995 }
+      ]
+    },
+    {
+      "title": "4N Fly Dive Coral Sea – Osprey & Bougainville",
+      "dateText": "15 Jun 2025",
+      "dateReturn": "19 Jun 2025",
+      "priceFromAUD": 4595,
+      "availability": "Few left",
+      "cabinsLeft": 2,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 1, "priceAUD": 5995 },
+        { "type": "Standard", "available": 1, "priceAUD": 4595 }
+      ]
+    },
+    {
+      "title": "7N Coral Sea Exploratory",
+      "dateText": "20 Jul 2025",
+      "dateReturn": "27 Jul 2025",
+      "priceFromAUD": 6995,
+      "availability": "Available",
+      "cabinsLeft": 8,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 3, "priceAUD": 7995 },
+        { "type": "Standard", "available": 5, "priceAUD": 6995 }
+      ]
+    },
+    {
+      "title": "Minke Whale Expedition 4N",
+      "dateText": "10 Jun 2025",
+      "dateReturn": "14 Jun 2025",
+      "priceFromAUD": 4895,
+      "availability": "Available",
+      "cabinsLeft": 5,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 2, "priceAUD": 5995 },
+        { "type": "Standard", "available": 3, "priceAUD": 4895 }
+      ]
+    },
+    {
+      "title": "3N Fly Dive Cod Hole – Ribbon Reefs",
+      "dateText": "12 Aug 2025",
+      "dateReturn": "15 Aug 2025",
+      "priceFromAUD": 4095,
+      "availability": "Available",
+      "cabinsLeft": 7,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 2, "priceAUD": 5195 },
+        { "type": "Standard", "available": 5, "priceAUD": 4095 }
+      ]
+    },
+    {
+      "title": "4N Fly Dive Coral Sea – Osprey & Bougainville",
+      "dateText": "05 Sep 2025",
+      "dateReturn": "09 Sep 2025",
+      "priceFromAUD": 4695,
+      "availability": "Few left",
+      "cabinsLeft": 2,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 1, "priceAUD": 6195 },
+        { "type": "Standard", "available": 1, "priceAUD": 4695 }
+      ]
+    },
+    {
+      "title": "7N Coral Sea Safari",
+      "dateText": "18 Oct 2025",
+      "dateReturn": "25 Oct 2025",
+      "priceFromAUD": 7095,
+      "availability": "Available",
+      "cabinsLeft": 9,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 3, "priceAUD": 8195 },
+        { "type": "Standard", "available": 6, "priceAUD": 7095 }
+      ]
+    },
+    {
+      "title": "Minke Whale Expedition 7N",
+      "dateText": "07 Nov 2025",
+      "dateReturn": "14 Nov 2025",
+      "priceFromAUD": 7295,
+      "availability": "Available",
+      "cabinsLeft": 6,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 2, "priceAUD": 8495 },
+        { "type": "Standard", "available": 4, "priceAUD": 7295 }
+      ]
+    },
+    {
+      "title": "3N Fly Dive Cod Hole – Ribbon Reefs",
+      "dateText": "14 Dec 2025",
+      "dateReturn": "17 Dec 2025",
+      "priceFromAUD": 4195,
+      "availability": "Available",
+      "cabinsLeft": 5,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 2, "priceAUD": 5295 },
+        { "type": "Standard", "available": 3, "priceAUD": 4195 }
+      ]
+    },
+    {
+      "title": "7N Coral Sea Exploratory",
+      "dateText": "15 Jan 2026",
+      "dateReturn": "22 Jan 2026",
+      "priceFromAUD": 7195,
+      "availability": "Available",
+      "cabinsLeft": 10,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 4, "priceAUD": 8395 },
+        { "type": "Standard", "available": 6, "priceAUD": 7195 }
+      ]
+    },
+    {
+      "title": "4N Fly Dive Coral Sea – Osprey & Bougainville",
+      "dateText": "20 Feb 2026",
+      "dateReturn": "24 Feb 2026",
+      "priceFromAUD": 4795,
+      "availability": "Few left",
+      "cabinsLeft": 2,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 1, "priceAUD": 6395 },
+        { "type": "Standard", "available": 1, "priceAUD": 4795 }
+      ]
+    },
+    {
+      "title": "3N Fly Dive Cod Hole – Ribbon Reefs",
+      "dateText": "10 Apr 2026",
+      "dateReturn": "13 Apr 2026",
+      "priceFromAUD": 4295,
+      "availability": "Available",
+      "cabinsLeft": 7,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        { "type": "Premium", "available": 2, "priceAUD": 5495 },
+        { "type": "Standard", "available": 5, "priceAUD": 4295 }
+      ]
+    }
+  ]
+}
