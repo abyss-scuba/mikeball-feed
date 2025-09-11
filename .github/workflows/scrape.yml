@@ -1,24 +1,28 @@
 name: Scrape Mike Ball Expeditions
 
 on:
+  push:
+    branches: [ main ]
+    paths:
+      - scripts/scrape.py
+      - requirements.txt
+      - .github/workflows/scrape.yml
   schedule:
-    - cron: "0 0 * * *"   # every day at 00:00 UTC
-  workflow_dispatch:
+    - cron: "0 0 * * *"   # run every day at 00:00 UTC
+  workflow_dispatch:       # allow manual run from GitHub UI
 
 permissions:
-  contents: write   # <--- add this block
-
-
-on:
-  schedule:
-    - cron: "0 0 * * *"   # every day at 00:00 UTC
-  workflow_dispatch:       # allow manual run from GitHub web UI
+  contents: write          # allow the workflow to commit/push
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
 
       - name: Set up Python
         uses: actions/setup-python@v4
