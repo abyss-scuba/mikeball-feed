@@ -268,7 +268,7 @@ def main():
     }
 
     # Write to repo root
-    out_path = "mikeball.json"
+    out_path = "mikeball_availability.json"
     with open(out_path, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
 
