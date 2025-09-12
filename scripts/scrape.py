@@ -6,32 +6,13 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from dateutil import parser as dateparser
 from bs4 import BeautifulSoup
-import requests
+from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
 URL = "https://www.mikeball.com/availability-mike-ball-dive-expeditions/"
 TZ  = ZoneInfo("Australia/Sydney")
 
-BASE_HEADERS = {
-    "User-Agent": ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                   "AppleWebKit/537.36 (KHTML, like Gecko) "
-                   "Chrome/122.0.0.0 Safari/537.36"),
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-}
-
-LIKELY_ACTIONS = [
-    "resco_search_availability",
-    "ra_search_availability",
-    "resco_availability",
-    "ra_availability",
-    "search_availability",
-    "availability_search",
-    "get_availability",
-]
-
-LIKELY_NONCE_KEYS = ["nonce", "security", "_ajax_nonce", "_wpnonce"]
-
-def log(msg): print(f"[scraper] {msg}", flush=True)
-def clean(s: str) -> str: return re.sub(r"\s+", " ", (s or "").strip())
+def clean(s: str) -> str:
+    return re.sub(r"\s+", " ", (s or "").strip())
 
 def parse_money_aud(text: str):
     if not text: return None
@@ -50,136 +31,74 @@ def within_6m(d):
     six = now + timedelta(days=31*6)
     return now <= d <= six
 
-def long_date(d): return d.strftime("%A %d %B %Y")
-def iso_date(d):  return d.strftime("%Y-%m-%d")
+def long_date(d): return d.strftime("%A %d %B %Y")  # e.g. Friday 12 September 2025
 
-def fetch(url): 
-    r = requests.get(url, headers=BASE_HEADERS, timeout=30); r.raise_for_status(); return r.text
-
-def extract_ajaxurl(html: str):
-    m = re.search(r'rescoAjax\s*=\s*\{\s*"ajaxurl"\s*:\s*"([^"]+admin-ajax\.php)"', html)
-    ajaxurl = (m.group(1) if m else "https://www.mikeball.com/wp-admin/admin-ajax.php").replace("\\/", "/")
-    return ajaxurl
-
-def extract_nonce_candidates(html: str):
-    cands = set()
-    # JSON-ish blocks: ..."nonce":"XYZ"  or ..."security":"XYZ"
-    for key in LIKELY_NONCE_KEYS:
-        for m in re.finditer(rf'("{key}"\s*:\s*")([A-Za-z0-9_-]+)(")', html):
-            cands.add((key, m.group(2)))
-    # data-nonce="XYZ"
-    for m in re.finditer(r'data-nonce\s*=\s*"([A-Za-z0-9_-]+)"', html, re.I):
-        cands.add(("nonce", m.group(1)))
-    # wp_localize_script patterns: var something = {"nonce":"..."}; capture value with any key
-    for m in re.finditer(r'["\'](?:nonce|security|_ajax_nonce|_wpnonce)["\']\s*:\s*["\']([A-Za-z0-9_-]+)["\']', html, re.I):
-        cands.add(("nonce", m.group(1)))
-    return list(cands)
-
-def discover_actions(js_urls):
-    actions = []
-    for js in js_urls:
-        try:
-            js_text = fetch(js)
-        except Exception:
-            continue
-        actions += [m.group(1) for m in re.finditer(r"action\s*:\s*['\"]([a-zA-Z0-9_:-]+)['\"]", js_text)]
-        actions += [m.group(1) for m in re.finditer(r"action=([a-zA-Z0-9_:-]+)", js_text)]
-    # unique preserve order
-    seen, uniq = set(), []
-    for a in actions:
-        if a not in seen:
-            seen.add(a); uniq.append(a)
-    return uniq
-
-def is_searchy(action: str):
-    if not action: return False
-    a = action.lower()
-    if "expand" in a or "berth" in a or "cabin" in a:
-        return False
-    return ("search" in a) or ("avail" in a)
-
-def post_try(ajaxurl, action, sdate, edate, name_val, nonce_kv, debug):
-    headers = dict(BASE_HEADERS)
-    headers["Referer"] = URL
-    headers["Origin"]  = "https://www.mikeball.com"
-    headers["X-Requested-With"] = "XMLHttpRequest"
-
-    data = {
-        "action": action,
-        "starts_at": sdate,
-        "ends_at":   edate,
-        "name":      name_val,
-        "hide_unavailable": "1",
-    }
-    if nonce_kv:
-        k, v = nonce_kv
-        data[k] = v
-
-    try:
-        r = requests.post(ajaxurl, headers=headers, data=data, timeout=40)
-        text = r.text or ""
-    except Exception as e:
-        debug.append(f"POST ERR action={action} dates=({sdate}|{edate}) name={name_val} nonce={nonce_kv} -> {e}")
-        return ("", False, debug)
-
-    ok = (r.status_code == 200 and "<table" in text and ("Departs" in text or "Returns" in text))
-    debug.append(f"POST {r.status_code} action={action} dates=({sdate}|{edate}) name={name_val} nonce={nonce_kv} -> {'MATCH' if ok else 'no'} (len={len(text)})")
-
-    with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
-        f.write(text)
-
-    return (text, ok, debug)
-
-def fetch_results_html():
-    html = fetch(URL)
-    ajaxurl = extract_ajaxurl(html)
-    js_urls = re.findall(r'https?://[^"\']+/wp-content/plugins/RescoApi/assets/js/[^"\']+\.js', html)
-
-    nonce_candidates = extract_nonce_candidates(html)
-    # Try also "no nonce"
-    nonce_options = list(nonce_candidates) + [None]
-    # If we didn't find any, still try a placeholder list of keys with empty value (some handlers accept any)
-    if not nonce_candidates:
-        nonce_options = [None] + [(k, "") for k in LIKELY_NONCE_KEYS]
-
-    discovered = discover_actions(js_urls)
-    candidates = [a for a in discovered if is_searchy(a)] + \
-                 [a for a in discovered if not is_searchy(a) and not re.search(r"(expand|berth|cabin)", a, re.I)] + \
-                 [a for a in LIKELY_ACTIONS if a not in discovered]
-
+def fetch_ajax_html():
     today = datetime.now(TZ).date()
-    ends  = today + timedelta(days=31*6)
-    date_variants = [(long_date(today), long_date(ends)), (iso_date(today), iso_date(ends))]
-    name_variants = ["all", ""]
+    end   = today + timedelta(days=31*6)
 
-    debug = []
-    debug.append(f"ajaxurl: {ajaxurl}")
-    debug.append("== nonce candidates ==")
-    debug += [f"- {kv}" for kv in nonce_candidates] or ["- (none)"]
-    debug.append("== actions from JS ==")
-    debug += [f"- {a}" for a in discovered] or ["- (none)"]
-    debug.append("== try order ==")
-    debug += [f"- {a}" for a in candidates]
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page(
+            viewport={"width": 1300, "height": 2200},
+            user_agent=("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                        "AppleWebKit/537.36 (KHTML, like Gecko) "
+                        "Chrome/122.0.0.0 Safari/537.36")
+        )
 
-    # Try combos
-    for action in candidates:
-        for (sd, ed) in date_variants:
-            for name_val in name_variants:
-                for nonce_kv in nonce_options:
-                    body, ok, debug = post_try(ajaxurl, action, sd, ed, name_val, nonce_kv, debug)
-                    if ok:
-                        with open("mikeball_actions_debug.txt", "w", encoding="utf-8") as f:
-                            f.write("\n".join(debug))
-                        return body, today, ends
-    # none worked — keep the last response + attempts log
-    with open("mikeball_actions_debug.txt", "w", encoding="utf-8") as f:
-        f.write("\n".join(debug))
-    return "", today, ends
+        page.goto(URL, wait_until="domcontentloaded", timeout=60000)
+        page.wait_for_timeout(800)
 
-def parse_results(results_html: str):
-    if not results_html: return []
-    soup = BeautifulSoup(results_html, "html.parser")
+        # Fill Start/End
+        try:
+            page.fill("#starts_at", long_date(today))
+            page.fill("#ends_at",   long_date(end))
+        except Exception:
+            pass
 
+        # Select ALL EXPEDITIONS
+        try:
+            page.select_option("select[name='name']", value="all")
+        except Exception:
+            pass
+
+        # Hide unavailable
+        try:
+            page.check("input[name='hide_unavailable']")
+        except Exception:
+            pass
+
+        # Prepare to capture admin-ajax POST response
+        def is_availability_resp(resp):
+            return ("admin-ajax.php" in resp.url) and (resp.request.method == "POST")
+
+        # Click Search
+        try:
+            page.click("button.ra-ajax", timeout=5000)
+        except Exception:
+            try:
+                page.get_by_role("button", name=re.compile(r"search", re.I)).click(timeout=3000)
+            except Exception:
+                pass
+
+        # Wait for the admin-ajax response and grab body
+        try:
+            resp = page.wait_for_response(is_availability_resp, timeout=20000)
+            body = resp.text()
+        except PWTimeout:
+            body = ""
+
+        browser.close()
+        # Save debug snapshot no matter what
+        with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
+            f.write(body or "")
+        return body, today, end
+
+def parse_results(html: str):
+    if not html: return []
+    soup = BeautifulSoup(html, "html.parser")
+
+    # Find table that has Departs & Returns
     table = None
     for tbl in soup.find_all("table"):
         heads = [clean(th.get_text()) for th in tbl.find_all("th")]
@@ -190,6 +109,7 @@ def parse_results(results_html: str):
 
     trips = []
     rows = table.find_all("tr")
+
     for i, tr in enumerate(rows):
         tds = tr.find_all("td")
         if not tds: continue
@@ -199,15 +119,16 @@ def parse_results(results_html: str):
         if len(cols) < 4: continue
 
         expedition  = cols[0]
-        dep_txt     = cols[1] if len(cols) >= 2 else ""
-        ret_txt     = cols[2] if len(cols) >= 3 else ""
+        departs_txt = cols[1] if len(cols) >= 2 else ""
+        returns_txt = cols[2] if len(cols) >= 3 else ""
         price_txt   = cols[3] if len(cols) >= 4 else ""
         avail_txt   = cols[4] if len(cols) >= 5 else ""
 
-        dep = parse_date(dep_txt)
-        ret = parse_date(ret_txt)
+        dep = parse_date(departs_txt)
+        ret = parse_date(returns_txt)
         if not dep or not within_6m(dep): continue
 
+        # Cabin breakdown is usually the next row with nested table
         cabins = []
         sib = tr.find_next_sibling("tr")
         if sib:
@@ -225,7 +146,11 @@ def parse_results(results_html: str):
                         p = parse_money_aud(cell)
                         if p: price_aud = p
                     if ctype:
-                        cabins.append({"cabin_type": ctype, "berths_left": berths, "price_aud": price_aud})
+                        cabins.append({
+                            "cabin_type": ctype,
+                            "berths_left": berths,
+                            "price_aud": price_aud
+                        })
 
         trips.append({
             "expedition": expedition or None,
@@ -246,7 +171,7 @@ def parse_results(results_html: str):
     return out
 
 def main():
-    html, start_date, end_date = fetch_results_html()
+    html, start_date, end_date = fetch_ajax_html()
     trips = parse_results(html)
     payload = {
         "source_url": URL,
@@ -257,7 +182,7 @@ def main():
     }
     with open("mikeball_availability.json", "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
-    log(f"✅ wrote mikeball_availability.json with {len(trips)} trips")
+    print(f"✅ wrote mikeball_availability.json with {len(trips)} trips")
 
 if __name__ == "__main__":
     try:
