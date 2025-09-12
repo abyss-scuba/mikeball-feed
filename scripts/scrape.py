@@ -68,7 +68,7 @@ def fetch_ajax_html():
         except Exception:
             pass
 
-        # Prepare to capture admin-ajax POST response
+        # Identify the admin-ajax POST that returns the table
         def is_availability_resp(resp):
             return ("admin-ajax.php" in resp.url) and (resp.request.method == "POST")
 
@@ -89,7 +89,7 @@ def fetch_ajax_html():
             body = ""
 
         browser.close()
-        # Save debug snapshot no matter what
+        # Save debug snapshot every run
         with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
             f.write(body or "")
         return body, today, end
