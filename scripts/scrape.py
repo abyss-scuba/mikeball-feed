@@ -1,233 +1,239 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import json, re, sys
-from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
-from dateutil import parser as dateparser
-from bs4 import BeautifulSoup
-from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
+"""
+Scrape Mike Ball Dive Expeditions availability (with cabins) by submitting
+the visible search form. No guessing AJAX/nonce.
 
-URL = "https://www.mikeball.com/availability-mike-ball-dive-expeditions/"
-TZ  = ZoneInfo("Australia/Sydney")
+USAGE
+-----
+# Rolling window (4→26 weeks from today, recommended)
+python scripts/scrape_mikeball.py --window --out mikeball_availability.json
 
-def clean(s: str) -> str:
-    return re.sub(r"\s+", " ", (s or "").strip())
+# Fixed range
+python scripts/scrape_mikeball.py --start 2025-10-01 --end 2026-03-31 --out mikeball_availability.json
 
-def parse_money_aud(text: str):
-    if not text: return None
-    m = re.search(r"([0-9][0-9,]*(?:\.\d{2})?)", text.replace(",", ""))
-    try: return int(round(float(m.group(1)))) if m else None
-    except Exception: return None
+# Debug visibly
+python scripts/scrape_mikeball.py --window --headful
+"""
 
-def parse_date(text: str):
-    if not text: return None
-    try: return dateparser.parse(text, dayfirst=True, fuzzy=True).date()
-    except Exception: return None
+import argparse
+import json
+import re
+import sys
+from datetime import date, datetime, timedelta
+from typing import Optional, List, Dict
 
-def within_6m(d):
+from playwright.sync_api import sync_playwright
+
+SOURCE_URL = "https://www.mikeball.com/availability-mike-ball-dive-expeditions/"
+
+# ====================== Basic helpers ======================
+
+def parse_money_to_int(s: Optional[str]) -> Optional[int]:
+    """Convert '$4,802' to 4802 (AUD integer)."""
+    if not s: return None
+    v = re.sub(r"[^\d.]", "", s)
+    if not v: return None
+    try: return int(round(float(v)))
+    except: return None
+
+def to_date_obj(txt: str) -> Optional[date]:
+    """Accepts 'Thu 11 Sep 2025' or '11 Sep 2025' or '11 September 2025'."""
+    if not txt: return None
+    clean = re.sub(r"^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+", "", txt.strip(), flags=re.I)
+    for fmt in ("%d %b %Y", "%d %B %Y"):
+        try: return datetime.strptime(clean, fmt).date()
+        except ValueError:
+            pass
+    return None
+
+def norm_availability(s: str) -> str:
+    t = (s or "").strip().lower()
+    if "sold" in t: return "Sold Out"
+    if "hurry" in t or "few" in t: return "Few left"
+    if "10+" in t or "avail" in t: return "Available"
+    return s.strip() if s else "—"
+
+def extract_int_in_text(s: str) -> Optional[int]:
+    if not s: return None
+    m = re.search(r"\d+", s)
+    return int(m.group()) if m else None
+
+def within_window(d: Optional[date], start: Optional[date], end: Optional[date]) -> bool:
     if not d: return False
-    now = datetime.now(TZ).date()
-    six = now + timedelta(days=31*6)
-    return now <= d <= six
+    if start and d < start: return False
+    if end and d > end: return False
+    return True
 
-def long_date(d):  # matches what the widget shows
+# ====================== Page/form helpers ======================
+
+def fmt_picker(d: date) -> str:
+    """Resco’s datepicker accepts human-readable text like 'Friday 12 September 2025'."""
     return d.strftime("%A %d %B %Y")
 
-def set_dates_and_confirm(page, start_str, end_str):
-    # Open start picker, type value, click OK
+def perform_search(page, start_d: date, end_d: date):
+    """Open page, fill dates, set expedition=ALL, click Search, expand 'See more'."""
+    page.goto(SOURCE_URL, wait_until="domcontentloaded")
+    page.wait_for_timeout(1200)
+
+    # Type dates into inputs
+    page.fill("#starts_at", "")
+    page.type("#starts_at", fmt_picker(start_d), delay=5)
+    page.fill("#ends_at", "")
+    page.type("#ends_at", fmt_picker(end_d), delay=5)
+
+    # Expedition = ALL (value='all')
     try:
-        page.click("#starts_at", timeout=3000)
-        page.fill("#starts_at", start_str)
-        # the widget renders .dtp and an OK button with text 'OK'
-        ok = page.locator(".dtp .btn, .dtp button:has-text('OK'), .dtp .dtp-btn-ok")
-        if ok.count():
-            ok.first.click(timeout=2000)
-    except Exception:
+        page.select_option("select[name='name']", value="all")
+    except:
         pass
 
-    # End date
+    # Uncheck "Hide unavailable" (if checked)
     try:
-        page.click("#ends_at", timeout=3000)
-        page.fill("#ends_at", end_str)
-        ok = page.locator(".dtp .btn, .dtp button:has-text('OK'), .dtp .dtp-btn-ok")
-        if ok.count():
-            ok.first.click(timeout=2000)
-    except Exception:
+        box = page.locator("input[name='hide_unavailable']")
+        if box.is_checked():
+            box.uncheck()
+    except:
         pass
 
-    # Fire input/change to be safe
-    page.evaluate("""
-      () => {
-        const fire = el => { el && el.dispatchEvent(new Event('input',{bubbles:true}));
-                             el && el.dispatchEvent(new Event('change',{bubbles:true})); };
-        fire(document.querySelector('#starts_at'));
-        fire(document.querySelector('#ends_at'));
-      }
-    """)
+    # Click Search (.ra-ajax)
+    page.click("button.ra-ajax")
 
-def submit_form(page):
-    # Use the real form submit hook—this is what the plugin binds to
-    page.evaluate("""
-      () => {
-        const form = document.querySelector('form.resco-form');
-        if (form && form.requestSubmit) form.requestSubmit();
-        else if (form) form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
-      }
-    """)
+    # Wait for results and at least one row
+    page.wait_for_selector("#availability-results", timeout=30000)
+    page.wait_for_selector("#availability-results table tbody tr", timeout=30000)
 
-def fetch_results_html():
-    today = datetime.now(TZ).date()
-    end   = today + timedelta(days=31*6)
-    start_str, end_str = long_date(today), long_date(end)
+    # Expand all “See more” to reveal cabins
+    see_more = page.locator("#availability-results :text('See more')")
+    for i in range(see_more.count()):
+        try: see_more.nth(i).click(timeout=1000)
+        except: pass
+    page.wait_for_timeout(800)
 
+def extract_from_results(page, start_date: Optional[date], end_date: Optional[date]) -> List[Dict]:
+    """Parse summary rows + cabin tables (if present)."""
+    trips: List[Dict] = []
+    rows = page.locator("#availability-results table tbody tr")
+    rcount = rows.count()
+
+    i = 0
+    while i < rcount:
+        tr = rows.nth(i)
+        cells = tr.locator("td")
+        if cells.count() >= 5:
+            title = cells.nth(0).inner_text().strip()
+            dep   = cells.nth(1).inner_text().strip()
+            ret   = cells.nth(2).inner_text().strip()
+            price = cells.nth(3).inner_text().strip()
+            av    = cells.nth(4).inner_text().strip()
+
+            d = to_date_obj(dep)
+            if within_window(d, start_date, end_date):
+                cabins: List[Dict] = []
+                cabins_left = None
+
+                # Next row often has cabin table
+                if i + 1 < rcount:
+                    nxt = rows.nth(i+1)
+                    if "cabin type" in nxt.inner_text().lower():
+                        tbl = nxt.locator("table:has-text('Cabin Type')")
+                        if tbl.count():
+                            body_rows = tbl.nth(0).locator("tbody tr")
+                            for ri in range(body_rows.count()):
+                                tds = body_rows.nth(ri).locator("td").all_inner_texts()
+                                if len(tds) >= 3:
+                                    cabins.append({
+                                        "type": tds[0].strip(),
+                                        "available": extract_int_in_text(tds[1]),
+                                        "priceAUD": parse_money_to_int(tds[2]),
+                                    })
+                            cabins_left = sum((c["available"] or 0) for c in cabins) if cabins else None
+                        i += 1  # skip detail row
+
+                trips.append({
+                    "title": title,
+                    "dateText": dep,
+                    "dateReturn": ret,
+                    "priceFromAUD": parse_money_to_int(price),
+                    "availability": norm_availability(av),
+                    "cabinsLeft": cabins_left,
+                    "link": SOURCE_URL,
+                    "cabins": cabins
+                })
+        i += 1
+
+    trips.sort(key=lambda t: to_date_obj(t.get("dateText","")) or date(1900,1,1))
+    return trips
+
+# ====================== Scraper runner ======================
+
+def run_scrape(start_date: date, end_date: date, headful: bool=False) -> Dict:
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
-        page = browser.new_page(
-            viewport={"width": 1300, "height": 2200},
-            user_agent=("Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                        "AppleWebKit/537.36 (KHTML, like Gecko) "
-                        "Chrome/122.0.0.0 Safari/537.36")
-        )
+        browser = p.chromium.launch(headless=not headful)
+        ctx = browser.new_context(viewport={"width": 1440, "height": 1600})
+        page = ctx.new_page()
+        page.set_default_timeout(20000)
 
-        page.goto(URL, wait_until="domcontentloaded", timeout=60000)
-        page.wait_for_timeout(800)
-
-        # 1) Dates (and confirm)
-        set_dates_and_confirm(page, start_str, end_str)
-
-        # 2) Expedition = ALL
         try:
-            page.select_option("select[name='name']", value="all")
-        except Exception:
-            pass
+            perform_search(page, start_date, end_date)
+            trips = extract_from_results(page, start_date, end_date)
+        except Exception as e:
+            # Save debug artifacts if anything goes wrong
+            try:
+                page.screenshot(path="debug_screen.png")
+                with open("debug_page.html","w",encoding="utf-8") as f:
+                    f.write(page.content())
+                print("❌ Error; saved debug_screen.png and debug_page.html")
+            except:
+                pass
+            raise e
+        finally:
+            ctx.close()
+            browser.close()
 
-        # 3) Hide unavailable
-        try:
-            cb = page.locator("input[name='hide_unavailable']")
-            if cb.is_visible():
-                cb.check()
-        except Exception:
-            pass
-
-        # 4) Submit the real form
-        submit_form(page)
-
-        # 5) Wait for results to render into #availability-results
-        html = ""
-        try:
-            page.wait_for_selector("#availability-results table", timeout=20000)
-            # Expand any "See more" to reveal cabins
-            for btn in page.locator("#availability-results >> text=/^\\s*See\\s*more\\s*$/i").all():
-                try: btn.click(timeout=500)
-                except Exception: pass
-            page.wait_for_timeout(400)
-            html = page.inner_html("#availability-results") or ""
-        except PWTimeout:
-            html = ""
-
-        # Debug artifacts
-        with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
-            f.write(html or "")
-        try:
-            page.screenshot(path="mikeball_results_screenshot.png", full_page=True)
-        except Exception:
-            pass
-
-        browser.close()
-        return html, today, end
-
-def parse_results(html: str):
-    if not html: return []
-    soup = BeautifulSoup(html, "html.parser")
-
-    # Find the results table with Departs/Returns
-    table = None
-    for tbl in soup.find_all("table"):
-        heads = [clean(th.get_text()) for th in tbl.find_all("th")]
-        hdr = " | ".join(heads).lower()
-        if "depart" in hdr and "return" in hdr:
-            table = tbl; break
-    if not table: return []
-
-    trips = []
-    rows = table.find_all("tr")
-
-    for i, tr in enumerate(rows):
-        tds = tr.find_all("td")
-        if not tds: continue
-        if "sold out" in clean(tr.get_text()).lower(): continue
-
-        cols = [clean(td.get_text()) for td in tds]
-        if len(cols) < 4: continue
-
-        expedition  = cols[0]
-        departs_txt = cols[1] if len(cols) >= 2 else ""
-        returns_txt = cols[2] if len(cols) >= 3 else ""
-        price_txt   = cols[3] if len(cols) >= 4 else ""
-        avail_txt   = cols[4] if len(cols) >= 5 else ""
-
-        dep = parse_date(departs_txt)
-        ret = parse_date(returns_txt)
-        if not dep or not within_6m(dep): continue
-
-        # Cabin breakdown (usually next row)
-        cabins = []
-        sib = tr.find_next_sibling("tr")
-        if sib:
-            cab_tbl = sib.find("table")
-            if cab_tbl and cab_tbl.find("th", string=re.compile(r"cabin type", re.I)):
-                for r in cab_tbl.find_all("tr"):
-                    ctd = [clean(x.get_text()) for x in r.find_all("td")]
-                    if not ctd: continue
-                    ctype = ctd[0]
-                    berths = None
-                    price_aud = None
-                    for cell in ctd[1:]:
-                        m = re.search(r"(\d+)\s*(?:berths?|left|avail)", cell.lower())
-                        if m: berths = int(m.group(1))
-                        p = parse_money_aud(cell)
-                        if p: price_aud = p
-                    if ctype:
-                        cabins.append({
-                            "cabin_type": ctype, "berths_left": berths, "price_aud": price_aud
-                        })
-
-        trips.append({
-            "expedition": expedition or None,
-            "departs": dep.isoformat(),
-            "returns": ret.isoformat() if ret else None,
-            "price_from_aud": parse_money_aud(price_txt),
-            "availability": avail_txt or None,
-            "cabins": cabins
-        })
-
-    # De-dupe + sort
-    seen, out = set(), []
-    for t in trips:
-        key = (t["expedition"], t["departs"], t["returns"])
-        if key not in seen:
-            seen.add(key); out.append(t)
-    out.sort(key=lambda x: x["departs"] or "9999-12-31")
-    return out
-
-def main():
-    html, start_date, end_date = fetch_results_html()
-    trips = parse_results(html)
-    payload = {
-        "source_url": URL,
-        "generated_at": datetime.now(TZ).isoformat(timespec="seconds"),
-        "window_start": start_date.isoformat(),
-        "window_end": end_date.isoformat(),
+    return {
+        "scrapedAt": datetime.utcnow().isoformat(timespec="seconds") + "Z",
+        "source": SOURCE_URL,
         "trips": trips
     }
-    with open("mikeball_availability.json", "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
-    print(f"✅ wrote mikeball_availability.json with {len(trips)} trips")
+
+# ====================== CLI ======================
+
+def parse_args():
+    ap = argparse.ArgumentParser(description="Scrape Mike Ball availability with cabin details.")
+    ap.add_argument("--start", help="Start date YYYY-MM-DD")
+    ap.add_argument("--end", help="End date YYYY-MM-DD")
+    ap.add_argument("--window", action="store_true",
+                    help="Rolling 4→26 weeks from today (ignores --start/--end)")
+    ap.add_argument("--out", default="mikeball_availability.json", help="Output JSON path")
+    ap.add_argument("--headful", action="store_true", help="Show browser window")
+    return ap.parse_args()
+
+def main():
+    args = parse_args()
+
+    if args.window:
+        today = date.today()
+        start_d = today + timedelta(days=28)   # 4 weeks
+        end_d   = today + timedelta(days=182)  # 26 weeks
+    else:
+        if not args.start or not args.end:
+            print("Please provide --start and --end or use --window", file=sys.stderr)
+            sys.exit(1)
+        try:
+            start_d = datetime.strptime(args.start, "%Y-%m-%d").date()
+            end_d   = datetime.strptime(args.end, "%Y-%m-%d").date()
+        except ValueError:
+            print("Dates must be YYYY-MM-DD", file=sys.stderr)
+            sys.exit(1)
+
+    data = run_scrape(start_d, end_d, headful=args.headful)
+
+    with open(args.out, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
+
+    print(f"✅ Wrote {len(data['trips'])} trips to {args.out}")
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print("FATAL:", e, file=sys.stderr)
-        sys.exit(1)
+    main()
