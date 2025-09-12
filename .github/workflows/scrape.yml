@@ -1,52 +1,44 @@
-name: Scrape Mike Ball Expeditions
+name: Refresh Mike Ball Availability
 
 on:
-  push:
-    branches: [ main ]
-    paths:
-      - scripts/scrape.py
-      - requirements.txt
-      - .github/workflows/scrape.yml
+  workflow_dispatch:        # allow manual runs from the Actions tab
   schedule:
-    - cron: "0 0 * * *"   # daily at 00:00 UTC
-  workflow_dispatch:
-
-permissions:
-  contents: write
+    - cron: "10 16 * * 0"   # every Sunday 16:10 UTC (Monday morning Sydney)
 
 jobs:
-  build:
+  scrape:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    concurrency:
-      group: mikeball-feed
-      cancel-in-progress: true
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-        with:
-          persist-credentials: true
+      - name: Check out repo
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.x"
+          python-version: "3.11"
 
-      - name: Install Python deps + Chromium
+      - name: Install Playwright + browser deps
         run: |
           pip install --upgrade pip
-          pip install -r requirements.txt
-          python -m playwright install --with-deps chromium
+          pip install playwright
+          python -m playwright install chromium
+          npx --yes playwright install-deps chromium
 
-      - name: Run scraper
-        run: python scripts/scrape.py
-
-      - name: Commit updated JSON
+      - name: Run scraper (rolling 4–26 weeks window)
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
-          git commit -m "Auto-update availability feed" || echo "No changes to commit"
-          git pull --rebase origin main || true
-          git push origin HEAD:main
+          python scripts/scrape.py --window --out mikeball_availability.json
+
+      - name: Show summary
+        run: |
+          echo "Wrote JSON:"
+          ls -l mikeball_availability.json
+          head -n 40 mikeball_availability.json || true
+
+      - name: Commit & push if changed
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "mikeball_availability.json"
+          message: "chore: refresh Mike Ball availability [skip ci]"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
