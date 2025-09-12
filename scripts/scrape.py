@@ -5,16 +5,15 @@
 Scrape Mike Ball availability by calling the RescoApi Ajax endpoint directly.
 
 Flow:
-1) GET the page to learn ajaxurl and locate the plugin JS
-2) Try to discover the Ajax 'action' name from the plugin JS
-3) POST to admin-ajax.php with: starts_at, ends_at, name='all', hide_unavailable=1, action=...
+1) GET page -> extract ajaxurl (admin-ajax.php) and plugin JS URLs
+2) Discover the correct Ajax 'action' from plugin JS (prefer names containing search/avail)
+3) POST to admin-ajax.php with:
+     starts_at, ends_at  (long date strings), name='all', hide_unavailable=1, action=...
 4) Parse returned HTML table:
    - Skip SOLD OUT
    - Extract: expedition, departs, returns, price_from_aud, availability
-   - Parse following 'Cabin Type' table when present (cabins: type, berths_left, price_aud)
+   - Parse following 'Cabin Type' table when present (cabins)
 5) Write mikeball_availability.json and mikeball_results_debug.html
-
-Designed for GitHub Actions; no headless browser required.
 """
 
 import json, re, sys
@@ -22,7 +21,6 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from dateutil import parser as dateparser
 from bs4 import BeautifulSoup
-
 import requests
 
 URL = "https://www.mikeball.com/availability-mike-ball-dive-expeditions/"
@@ -36,11 +34,11 @@ HEADERS = {
     )
 }
 
+# Best guesses for the WP AJAX action
 LIKELY_ACTION_NAMES = [
-    # common patterns for WP AJAX handlers
     "resco_search_availability",
-    "resco_availability",
     "ra_search_availability",
+    "resco_availability",
     "ra_availability",
     "search_availability",
     "availability_search",
@@ -74,98 +72,109 @@ def within_6m(d):
     return now <= d <= six
 
 def long_date(d):
-    # Site uses long human format (e.g., Friday 12 September 2025)
+    # Page uses long format, e.g. "Friday 12 September 2025"
     return d.strftime("%A %d %B %Y")
 
 def get_ajaxurl_and_js():
-    """Fetch the main page and extract ajaxurl and plugin JS URL(s)."""
+    """Fetch the page and extract ajaxurl + Resco plugin JS URLs."""
     r = requests.get(URL, headers=HEADERS, timeout=30)
     r.raise_for_status()
     html = r.text
 
-    # ajaxurl from inline var: var rescoAjax = {"ajaxurl":"https://.../wp-admin/admin-ajax.php"}
+    # ajaxurl is defined in inline JS like: var rescoAjax = {"ajaxurl":"https:\/\/...\/admin-ajax.php"}
     m = re.search(r'rescoAjax\s*=\s*\{\s*"ajaxurl"\s*:\s*"([^"]+admin-ajax\.php)"', html)
     ajaxurl = m.group(1) if m else "https://www.mikeball.com/wp-admin/admin-ajax.php"
+    # de-escape \/ -> /
+    ajaxurl = ajaxurl.replace("\\/", "/")
+    log(f"ajaxurl: {ajaxurl}")
 
-    # find plugin JS (RescoApi assets js)
-    js_urls = re.findall(
-        r'https?://[^"\']+/wp-content/plugins/RescoApi/assets/js/[^"\']+\.js', html
-    )
+    js_urls = re.findall(r'https?://[^"\']+/wp-content/plugins/RescoApi/assets/js/[^"\']+\.js', html)
+    if js_urls:
+        log(f"plugin js: {', '.join(js_urls[:2])}{' ...' if len(js_urls)>2 else ''}")
     return ajaxurl, js_urls
 
 def discover_action_from_js(js_urls):
-    """Try to read the plugin JS and detect the Ajax 'action' name."""
+    """
+    Inspect plugin JS; prefer actions containing 'search' or 'avail'.
+    Ignore actions like 'ra_expand_berths' which are not the search.
+    """
+    candidates = []
     for js_url in js_urls:
         try:
             r = requests.get(js_url, headers=HEADERS, timeout=30)
             if r.status_code != 200 or not r.text:
                 continue
             js = r.text
-
-            # Search for typical jQuery ajax post patterns that include 'action'
-            # e.g. data: { action: 'resco_search_availability', ... }
-            m = re.search(r"action\s*:\s*['\"]([a-zA-Z0-9_:-]+)['\"]", js)
-            if m:
-                return m.group(1)
-
-            # Another pattern: 'action=resco_search_availability' in query strings
-            m = re.search(r"action=([a-zA-Z0-9_:-]+)", js)
-            if m:
-                return m.group(1)
-
+            # data: { action: 'something' } patterns
+            for m in re.finditer(r"action\s*:\s*['\"]([a-zA-Z0-9_:-]+)['\"]", js):
+                candidates.append(m.group(1))
+            # query string style: action=xyz
+            for m in re.finditer(r"action=([a-zA-Z0-9_:-]+)", js):
+                candidates.append(m.group(1))
         except Exception:
             continue
+
+    # Prefer a candidate that looks like a search/availability action
+    for c in candidates:
+        if re.search(r"(search|avail)", c, re.I):
+            log(f"discovered action in JS: {c}")
+            return c
+
+    # Otherwise return None and we'll try the fallback list
     return None
 
 def try_post(ajaxurl, action, starts_at, ends_at):
-    """POST to admin-ajax.php using a candidate action. Return HTML (or None)."""
+    """POST to admin-ajax.php using a candidate action. Return (html, ok)."""
     data = {
         "action": action,
         "starts_at": starts_at,
         "ends_at": ends_at,
-        "name": "all",                 # -- ALL EXPEDITIONS --
-        "hide_unavailable": "1",       # checkbox checked
+        "name": "all",           # -- ALL EXPEDITIONS --
+        "hide_unavailable": "1",
     }
-    # WP admin-ajax typically expects POST
-    r = requests.post(ajaxurl, headers=HEADERS, data=data, timeout=40)
-    if r.status_code != 200:
-        return None
+    try:
+        r = requests.post(ajaxurl, headers=HEADERS, data=data, timeout=40)
+    except Exception as e:
+        log(f"post error for action={action}: {e}")
+        return ("", False)
+
     text = r.text or ""
-    # Quick sanity check that we got a table-like payload back
-    if "<table" in text and ("Departs" in text or "Returns" in text):
-        return text
-    return None
+    # Save last response for debugging if needed
+    with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
+        f.write(text)
+
+    # table present?
+    if r.status_code == 200 and "<table" in text and ("Departs" in text or "Returns" in text):
+        log(f"POST ok for action={action}")
+        return (text, True)
+
+    log(f"POST returned {r.status_code} for action={action}; table not detected")
+    return (text, False)
 
 def fetch_results_html():
-    """Main driver to obtain the rendered results HTML via Ajax POST."""
+    """Main driver to obtain rendered results HTML via Ajax POST."""
     ajaxurl, js_urls = get_ajaxurl_and_js()
-    log(f"ajaxurl: {ajaxurl}")
-    if js_urls:
-        log(f"plugin js: {', '.join(js_urls[:2])}{' ...' if len(js_urls)>2 else ''}")
-
     today = datetime.now(TZ).date()
     ends  = today + timedelta(days=31*6)
     start_str = long_date(today)
     end_str   = long_date(ends)
 
-    # 1) Try to discover the 'action' from plugin JS
+    # 1) Try to discover action from JS
     action = discover_action_from_js(js_urls)
     if action:
-        log(f"discovered action in JS: {action}")
-        html = try_post(ajaxurl, action, start_str, end_str)
-        if html:
+        html, ok = try_post(ajaxurl, action, start_str, end_str)
+        if ok:
             return html, today, ends
 
-    # 2) Try a short list of likely action names
-    log("discovery failed; trying likely action names…")
-    for candidate in LIKELY_ACTION_NAMES:
-        log(f"trying action={candidate}")
-        html = try_post(ajaxurl, candidate, start_str, end_str)
-        if html:
-            log(f"success with action={candidate}")
+    # 2) Try fallback list
+    log("discovery failed or not valid; trying likely action names…")
+    for cand in LIKELY_ACTION_NAMES:
+        html, ok = try_post(ajaxurl, cand, start_str, end_str)
+        if ok:
+            log(f"success with action={cand}")
             return html, today, ends
 
-    # 3) Give up (write empty results for now)
+    # 3) Give up (debug HTML already saved)
     log("failed to obtain results from Ajax endpoint")
     return "", today, ends
 
@@ -175,7 +184,7 @@ def parse_results(results_html: str):
 
     soup = BeautifulSoup(results_html, "html.parser")
 
-    # Find the first table that has headers Departs & Returns
+    # Find table with Departs & Returns
     table = None
     for tbl in soup.find_all("table"):
         heads = [clean(th.get_text()) for th in tbl.find_all("th")]
@@ -193,7 +202,6 @@ def parse_results(results_html: str):
         tds = tr.find_all("td")
         if not tds:
             continue
-
         row_text = clean(tr.get_text()).lower()
         if "sold out" in row_text:
             continue
@@ -213,7 +221,7 @@ def parse_results(results_html: str):
         if not dep or not within_6m(dep):
             continue
 
-        # Cabin breakdown is often in the next row as a nested table
+        # Cabin breakdown often in next <tr> as nested table
         cabins = []
         if i + 1 < len(rows):
             sib = rows[i + 1]
@@ -258,11 +266,6 @@ def parse_results(results_html: str):
 
 def main():
     html, start_date, end_date = fetch_results_html()
-
-    # Always save what we received for debugging/verification
-    with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
-        f.write(html or "")
-
     trips = parse_results(html)
     payload = {
         "source_url": URL,
@@ -273,7 +276,6 @@ def main():
     }
     with open("mikeball_availability.json", "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=2)
-
     log(f"✅ wrote mikeball_availability.json with {len(trips)} trips")
 
 if __name__ == "__main__":
