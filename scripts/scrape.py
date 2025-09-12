@@ -5,16 +5,16 @@
 Scrape Mike Ball Dive Expeditions availability (with cabins) by submitting
 the visible search form. No guessing AJAX/nonce.
 
-USAGE
------
-# Rolling window (4→26 weeks from today, recommended)
-python scripts/scrape_mikeball.py --window --out mikeball_availability.json
+USAGE (local)
+-------------
+# Rolling window (4→26 weeks from today; default if no args)
+python scripts/scrape.py --window --out mikeball_availability.json
 
 # Fixed range
-python scripts/scrape_mikeball.py --start 2025-10-01 --end 2026-03-31 --out mikeball_availability.json
+python scripts/scrape.py --start 2025-10-01 --end 2026-03-31 --out mikeball_availability.json
 
 # Debug visibly
-python scripts/scrape_mikeball.py --window --headful
+python scripts/scrape.py --window --headful
 """
 
 import argparse
@@ -32,38 +32,51 @@ SOURCE_URL = "https://www.mikeball.com/availability-mike-ball-dive-expeditions/"
 
 def parse_money_to_int(s: Optional[str]) -> Optional[int]:
     """Convert '$4,802' to 4802 (AUD integer)."""
-    if not s: return None
+    if not s:
+        return None
     v = re.sub(r"[^\d.]", "", s)
-    if not v: return None
-    try: return int(round(float(v)))
-    except: return None
+    if not v:
+        return None
+    try:
+        return int(round(float(v)))
+    except:
+        return None
 
 def to_date_obj(txt: str) -> Optional[date]:
     """Accepts 'Thu 11 Sep 2025' or '11 Sep 2025' or '11 September 2025'."""
-    if not txt: return None
+    if not txt:
+        return None
     clean = re.sub(r"^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+", "", txt.strip(), flags=re.I)
     for fmt in ("%d %b %Y", "%d %B %Y"):
-        try: return datetime.strptime(clean, fmt).date()
+        try:
+            return datetime.strptime(clean, fmt).date()
         except ValueError:
             pass
     return None
 
 def norm_availability(s: str) -> str:
     t = (s or "").strip().lower()
-    if "sold" in t: return "Sold Out"
-    if "hurry" in t or "few" in t: return "Few left"
-    if "10+" in t or "avail" in t: return "Available"
+    if "sold" in t:
+        return "Sold Out"
+    if "hurry" in t or "few" in t:
+        return "Few left"
+    if "10+" in t or "avail" in t:
+        return "Available"
     return s.strip() if s else "—"
 
 def extract_int_in_text(s: str) -> Optional[int]:
-    if not s: return None
+    if not s:
+        return None
     m = re.search(r"\d+", s)
     return int(m.group()) if m else None
 
 def within_window(d: Optional[date], start: Optional[date], end: Optional[date]) -> bool:
-    if not d: return False
-    if start and d < start: return False
-    if end and d > end: return False
+    if not d:
+        return False
+    if start and d < start:
+        return False
+    if end and d > end:
+        return False
     return True
 
 # ====================== Page/form helpers ======================
@@ -107,8 +120,10 @@ def perform_search(page, start_d: date, end_d: date):
     # Expand all “See more” to reveal cabins
     see_more = page.locator("#availability-results :text('See more')")
     for i in range(see_more.count()):
-        try: see_more.nth(i).click(timeout=1000)
-        except: pass
+        try:
+            see_more.nth(i).click(timeout=1000)
+        except:
+            pass
     page.wait_for_timeout(800)
 
 def extract_from_results(page, start_date: Optional[date], end_date: Optional[date]) -> List[Dict]:
@@ -205,7 +220,7 @@ def parse_args():
     ap.add_argument("--start", help="Start date YYYY-MM-DD")
     ap.add_argument("--end", help="End date YYYY-MM-DD")
     ap.add_argument("--window", action="store_true",
-                    help="Rolling 4→26 weeks from today (ignores --start/--end)")
+                    help="Rolling 4→26 weeks from today (ignored if explicit dates provided)")
     ap.add_argument("--out", default="mikeball_availability.json", help="Output JSON path")
     ap.add_argument("--headful", action="store_true", help="Show browser window")
     return ap.parse_args()
@@ -213,14 +228,15 @@ def parse_args():
 def main():
     args = parse_args()
 
+    # Default to rolling window if neither --window nor explicit dates provided
+    if not args.window and not (args.start and args.end):
+        args.window = True
+
     if args.window:
         today = date.today()
         start_d = today + timedelta(days=28)   # 4 weeks
         end_d   = today + timedelta(days=182)  # 26 weeks
     else:
-        if not args.start or not args.end:
-            print("Please provide --start and --end or use --window", file=sys.stderr)
-            sys.exit(1)
         try:
             start_d = datetime.strptime(args.start, "%Y-%m-%d").date()
             end_d   = datetime.strptime(args.end, "%Y-%m-%d").date()
