@@ -49,3 +49,4 @@ jobs:
           git commit -m "Auto-update availability feed" || echo "No changes to commit"
           git pull --rebase origin main || true
           git push origin HEAD:main
+          
