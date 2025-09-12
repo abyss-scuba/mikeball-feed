@@ -2,14 +2,13 @@
 # -*- coding: utf-8 -*-
 
 """
-Scrapes Mike Ball "All Expeditions" with Playwright (headless Chromium).
-- Renders JS (so the table exists)
-- Ticks "Hide unavailable expeditions" and clicks Search
-- Waits specifically for the table that has header "Price From (AUD)"
-- Expands "See more" (to reveal cabin table)
-- Extracts next 6 months, skipping SOLD OUT
-- Fields: expedition, departs, returns, price_from_aud, availability, cabins[]
-- Writes mikeball_availability.json (repo root)
+Scrapes Mike Ball 'All Expeditions' with Playwright (headless Chromium).
+- Checks 'Hide unavailable expeditions'
+- Clicks Search
+- Waits for network to go idle
+- Parses the results table by headers 'Departs' & 'Returns'
+- Filters to next 6 months and skips SOLD OUT
+- Writes mikeball_availability.json
 """
 
 import json, re, sys
@@ -17,7 +16,7 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from dateutil import parser as dateparser
 from bs4 import BeautifulSoup
-from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
+from playwright.sync_api import sync_playwright
 
 URL = "https://www.mikeball.com/availability-mike-ball-dive-expeditions/"
 TZ  = ZoneInfo("Australia/Sydney")
@@ -27,7 +26,6 @@ def clean(s: str) -> str:
 
 def parse_money_aud(text: str):
     if not text: return None
-    # accept "AUD 2,385" or "$2,385"
     m = re.search(r"([0-9][0-9,]*(?:\.\d{2})?)", text.replace(",", ""))
     return int(round(float(m.group(1)))) if m else None
 
@@ -44,40 +42,34 @@ def within_next_six_months(d):
     six = now + timedelta(days=31*6)
     return now <= d <= six
 
-def get_rendered_table_html():
+def get_full_html():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page(viewport={"width": 1280, "height": 2000})
+        page = browser.new_page(viewport={"width": 1280, "height": 2200})
         page.goto(URL, wait_until="domcontentloaded", timeout=60000)
 
-        # give page scripts a moment
+        # small settle
         page.wait_for_timeout(1200)
 
-        # Tick "Hide unavailable expeditions" if present
+        # Tick 'Hide unavailable expeditions'
         try:
-            cb = page.get_by_role("checkbox", name=re.compile(r"hide.*unavailable", re.I))
-            cb.check()
+            page.get_by_role("checkbox", name=re.compile(r"hide.*unavailable", re.I)).check()
         except Exception:
             pass
 
-        # Click "Search" to ensure results render
+        # Click Search
         try:
             page.get_by_role("button", name=re.compile(r"search", re.I)).click(timeout=2500)
         except Exception:
             pass
 
-        # Wait for the results table that has "Price From (AUD)" header
-        # (this is the most stable hitching point on the page)
+        # Wait until XHRs settle
         try:
-            page.wait_for_selector(
-                "xpath=//table[.//th[contains(.,'Price From') and contains(.,'AUD')]]",
-                timeout=20000
-            )
-        except PWTimeout:
-            # small extra wait; some loads are slow
+            page.wait_for_load_state("networkidle", timeout=20000)
+        except Exception:
             page.wait_for_timeout(1500)
 
-        # Expand "See more" buttons to reveal the cabin table, if present
+        # Try expanding any 'See more' buttons (to reveal cabin tables)
         try:
             for btn in page.locator("text=/^\\s*See\\s*more\\s*$/i").all():
                 try: btn.click(timeout=800)
@@ -86,26 +78,28 @@ def get_rendered_table_html():
         except Exception:
             pass
 
-        # Grab the *outerHTML* of the price/availability table only
-        table_el = page.locator(
-            "xpath=//table[.//th[contains(.,'Price From') and contains(.,'AUD')]]"
-        ).first
-        outer = table_el.evaluate("el => el.outerHTML")
+        html = page.content()
         browser.close()
-        return outer
+        return html
 
-def parse_table_html(table_html: str):
-    soup = BeautifulSoup(table_html, "html.parser")
+def parse_results(html: str):
+    soup = BeautifulSoup(html, "html.parser")
+
+    # Find a table that has BOTH Departs and Returns in the header
+    target = None
+    for tbl in soup.find_all("table"):
+        heads = [clean(th.get_text()) for th in tbl.find_all("th")]
+        hj = " | ".join(heads).lower()
+        if "depart" in hj and "return" in hj:
+            target = tbl
+            break
+    if not target:
+        return []
+
     trips = []
-
-    # header map (not strictly needed, but helpful if column order changes)
-    headers = [clean(th.get_text()) for th in soup.find_all("th")]
-    # We expect these headers somewhere across the thead:
-    # "Expeditions", "Departs", "Returns", "Price From (AUD)", "Availability"
-
-    for tr in soup.find_all("tr"):
+    for tr in target.find_all("tr"):
         tds = tr.find_all("td")
-        if not tds:  # skip header rows
+        if not tds:
             continue
 
         row_text = clean(tr.get_text())
@@ -113,7 +107,7 @@ def parse_table_html(table_html: str):
             continue
 
         cols = [clean(td.get_text()) for td in tds]
-        # Heuristic: title, departs, returns, price, availability in the first 5 cols
+        # Expect approx: [Expeditions, Departs, Returns, Price From (AUD), Availability, ...]
         if len(cols) < 4:
             continue
 
@@ -123,22 +117,20 @@ def parse_table_html(table_html: str):
         price_txt   = cols[3] if len(cols) >= 4 else ""
         avail_txt   = cols[4] if len(cols) >= 5 else ""
 
-        dep_date = parse_date(departs_txt)
-        ret_date = parse_date(returns_txt)
-        if not within_next_six_months(dep_date):
+        dep = parse_date(departs_txt)
+        ret = parse_date(returns_txt)
+        if not dep or not within_next_six_months(dep):
             continue
 
-        # Cabin table often appears as the next <tr> (sibling) with its own <table>
+        # Cabin breakdown often sits in the next sibling row as a nested table
         cabins = []
         sib = tr.find_next_sibling("tr")
         if sib:
-            cab_table = sib.find("table")
-            # Look for a cabin header
-            if cab_table and cab_table.find("th", string=re.compile(r"cabin type", re.I)):
-                for c_tr in cab_table.find_all("tr"):
-                    ctd = [clean(x.get_text()) for x in c_tr.find_all("td")]
-                    if not ctd:
-                        continue
+            cab_tbl = sib.find("table")
+            if cab_tbl and cab_tbl.find("th", string=re.compile(r"cabin type", re.I)):
+                for r in cab_tbl.find_all("tr"):
+                    ctd = [clean(x.get_text()) for x in r.find_all("td")]
+                    if not ctd: continue
                     ctype = ctd[0]
                     berths = None
                     price_aud = None
@@ -156,8 +148,8 @@ def parse_table_html(table_html: str):
 
         trips.append({
             "expedition": expedition or None,
-            "departs": dep_date.isoformat() if dep_date else None,
-            "returns": ret_date.isoformat() if ret_date else None,
+            "departs": dep.isoformat(),
+            "returns": ret.isoformat() if ret else None,
             "price_from_aud": parse_money_aud(price_txt),
             "availability": avail_txt or None,
             "cabins": cabins
@@ -167,9 +159,8 @@ def parse_table_html(table_html: str):
     return trips
 
 def main():
-    table_html = get_rendered_table_html()
-    trips = parse_table_html(table_html)
-
+    html = get_full_html()
+    trips = parse_results(html)
     now = datetime.now(TZ).date()
     six = now + timedelta(days=31*6)
     payload = {
