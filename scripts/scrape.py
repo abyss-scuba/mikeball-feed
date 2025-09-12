@@ -31,13 +31,56 @@ def within_6m(d):
     six = now + timedelta(days=31*6)
     return now <= d <= six
 
-def long_date(d): return d.strftime("%A %d %B %Y")  # e.g. Friday 12 September 2025
+def long_date(d):  # matches what the widget shows
+    return d.strftime("%A %d %B %Y")
 
-def fetch_ajax_or_dom_html():
-    """Drive the page, submit the form, and return either the admin-ajax HTML or the rendered results container."""
+def set_dates_and_confirm(page, start_str, end_str):
+    # Open start picker, type value, click OK
+    try:
+        page.click("#starts_at", timeout=3000)
+        page.fill("#starts_at", start_str)
+        # the widget renders .dtp and an OK button with text 'OK'
+        ok = page.locator(".dtp .btn, .dtp button:has-text('OK'), .dtp .dtp-btn-ok")
+        if ok.count():
+            ok.first.click(timeout=2000)
+    except Exception:
+        pass
+
+    # End date
+    try:
+        page.click("#ends_at", timeout=3000)
+        page.fill("#ends_at", end_str)
+        ok = page.locator(".dtp .btn, .dtp button:has-text('OK'), .dtp .dtp-btn-ok")
+        if ok.count():
+            ok.first.click(timeout=2000)
+    except Exception:
+        pass
+
+    # Fire input/change to be safe
+    page.evaluate("""
+      () => {
+        const fire = el => { el && el.dispatchEvent(new Event('input',{bubbles:true}));
+                             el && el.dispatchEvent(new Event('change',{bubbles:true})); };
+        fire(document.querySelector('#starts_at'));
+        fire(document.querySelector('#ends_at'));
+      }
+    """)
+
+def submit_form(page):
+    # Use the real form submit hook—this is what the plugin binds to
+    page.evaluate("""
+      () => {
+        const form = document.querySelector('form.resco-form');
+        if (form && form.requestSubmit) form.requestSubmit();
+        else if (form) form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));
+      }
+    """)
+
+def fetch_results_html():
     today = datetime.now(TZ).date()
     end   = today + timedelta(days=31*6)
-    ajax_html = ""
+    start_str, end_str = long_date(today), long_date(end)
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page(
@@ -50,70 +93,55 @@ def fetch_ajax_or_dom_html():
         page.goto(URL, wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(800)
 
-        # Fill form fields
-        try:
-            page.fill("#starts_at", long_date(today))
-            page.fill("#ends_at",   long_date(end))
-        except Exception:
-            pass
+        # 1) Dates (and confirm)
+        set_dates_and_confirm(page, start_str, end_str)
+
+        # 2) Expedition = ALL
         try:
             page.select_option("select[name='name']", value="all")
         except Exception:
             pass
+
+        # 3) Hide unavailable
         try:
-            page.check("input[name='hide_unavailable']")
+            cb = page.locator("input[name='hide_unavailable']")
+            if cb.is_visible():
+                cb.check()
         except Exception:
             pass
 
-        # Predicate for the admin-ajax POST used by the plugin
-        def is_availability_resp(resp):
-            return ("admin-ajax.php" in resp.url) and (resp.request.method.upper() == "POST")
+        # 4) Submit the real form
+        submit_form(page)
 
-        # Click Search while expecting the AJAX response
+        # 5) Wait for results to render into #availability-results
+        html = ""
         try:
-            with page.expect_response(is_availability_resp, timeout=20000) as resp_info:
-                try:
-                    page.click("button.ra-ajax", timeout=5000)
-                except Exception:
-                    page.get_by_role("button", name=re.compile(r"search", re.I)).click(timeout=3000)
-            resp = resp_info.value
-            ajax_html = resp.text()
-        except PWTimeout:
-            ajax_html = ""
-
-        # Fallback: if we didn’t catch the network, try the rendered container
-        dom_html = ""
-        try:
-            page.wait_for_load_state("networkidle", timeout=6000)
-            page.wait_for_selector("#availability-results", timeout=6000)
-            # Give any "See more" a click to reveal cabin tables
+            page.wait_for_selector("#availability-results table", timeout=20000)
+            # Expand any "See more" to reveal cabins
             for btn in page.locator("#availability-results >> text=/^\\s*See\\s*more\\s*$/i").all():
                 try: btn.click(timeout=500)
                 except Exception: pass
-            # Extract the container HTML
-            dom_html = page.inner_html("#availability-results") or ""
-        except Exception:
-            dom_html = ""
+            page.wait_for_timeout(400)
+            html = page.inner_html("#availability-results") or ""
+        except PWTimeout:
+            html = ""
 
-        # Optional screenshot for difficult cases
+        # Debug artifacts
+        with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
+            f.write(html or "")
         try:
             page.screenshot(path="mikeball_results_screenshot.png", full_page=True)
         except Exception:
             pass
 
         browser.close()
-
-    # Save the best debug snapshot
-    debug = ajax_html if ajax_html else dom_html
-    with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
-        f.write(debug or "")
-    return (ajax_html or dom_html), today, end
+        return html, today, end
 
 def parse_results(html: str):
     if not html: return []
     soup = BeautifulSoup(html, "html.parser")
 
-    # Find the results table that has Departs & Returns
+    # Find the results table with Departs/Returns
     table = None
     for tbl in soup.find_all("table"):
         heads = [clean(th.get_text()) for th in tbl.find_all("th")]
@@ -143,7 +171,7 @@ def parse_results(html: str):
         ret = parse_date(returns_txt)
         if not dep or not within_6m(dep): continue
 
-        # Cabin breakdown is usually the next row with nested table
+        # Cabin breakdown (usually next row)
         cabins = []
         sib = tr.find_next_sibling("tr")
         if sib:
@@ -162,9 +190,7 @@ def parse_results(html: str):
                         if p: price_aud = p
                     if ctype:
                         cabins.append({
-                            "cabin_type": ctype,
-                            "berths_left": berths,
-                            "price_aud": price_aud
+                            "cabin_type": ctype, "berths_left": berths, "price_aud": price_aud
                         })
 
         trips.append({
@@ -176,7 +202,7 @@ def parse_results(html: str):
             "cabins": cabins
         })
 
-    # de-dup & sort
+    # De-dupe + sort
     seen, out = set(), []
     for t in trips:
         key = (t["expedition"], t["departs"], t["returns"])
@@ -186,7 +212,7 @@ def parse_results(html: str):
     return out
 
 def main():
-    html, start_date, end_date = fetch_ajax_or_dom_html()
+    html, start_date, end_date = fetch_results_html()
     trips = parse_results(html)
     payload = {
         "source_url": URL,
