@@ -32,8 +32,8 @@ def within_6m(d):
     six = now + timedelta(days=31*6)
     return now <= d <= six
 
-def long_date(d):  # matches the page’s date format
-    return d.strftime("%A %d %B %Y")
+def long_date(d):
+    return d.strftime("%A %d %B %Y")  # e.g. Friday 12 September 2025
 
 def get_results_html():
     today = datetime.now(TZ).date()
@@ -50,26 +50,26 @@ def get_results_html():
         page.goto(URL, wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(800)
 
-        # --- Fill the form USING JS (fires input/change) ---
+        # Fill the form and fire input/change events
         js_fill = """
-        (dStart, dEnd) => {
+        (data) => {
           const fire = (el) => {
             el.dispatchEvent(new Event('input', {bubbles:true}));
             el.dispatchEvent(new Event('change', {bubbles:true}));
           };
           const s = document.querySelector('#starts_at');
           const e = document.querySelector('#ends_at');
-          if (s) { s.value = dStart; fire(s); }
-          if (e) { e.value = dEnd;   fire(e); }
+          if (s) { s.value = data.dStart; fire(s); }
+          if (e) { e.value = data.dEnd;   fire(e); }
           const sel = document.querySelector("select[name='name']");
           if (sel) { sel.value = 'all'; fire(sel); }
           const cb  = document.querySelector("input[name='hide_unavailable']");
           if (cb && !cb.checked) { cb.click(); }
         }
         """
-        page.evaluate(js_fill, long_date(today), long_date(end))
+        page.evaluate(js_fill, {"dStart": long_date(today), "dEnd": long_date(end)})
 
-        # Click the real AJAX Search button
+        # Click the AJAX Search button
         try:
             page.click("button.ra-ajax", timeout=5000)
         except Exception:
@@ -78,16 +78,15 @@ def get_results_html():
             except Exception:
                 pass
 
-        # Wait for the results container to be populated with a table
+        # Wait for results in #availability-results
         try:
             page.wait_for_selector("#availability-results", timeout=25000)
             page.wait_for_load_state("networkidle", timeout=15000)
             page.wait_for_selector("#availability-results table tbody tr", timeout=15000)
         except PWTimeout:
-            # last grace wait; some runs are slow
             page.wait_for_timeout(2000)
 
-        # Expand “See more” buttons inside the results (for cabin tables)
+        # Expand “See more” in results for cabin tables
         try:
             for btn in page.locator("#availability-results >> text=/^\\s*See\\s*more\\s*$/i").all():
                 try: btn.click(timeout=800)
@@ -96,13 +95,13 @@ def get_results_html():
         except Exception:
             pass
 
-        # Extract only the results HTML we need
+        # Only grab the results container HTML (easier to parse)
         try:
             results_html = page.locator("#availability-results").first.evaluate("el => el.innerHTML")
         except Exception:
             results_html = ""
 
-        # Write a tiny debug snapshot so we can see what arrived (safe to keep)
+        # Optional debug snapshot
         with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
             f.write(results_html or "")
 
@@ -114,7 +113,7 @@ def parse_results(results_html: str):
         return []
     soup = BeautifulSoup(results_html, "html.parser")
 
-    # Find the first table that has departs/returns headers
+    # Find the results table that has departs/returns
     table = None
     for tbl in soup.find_all("table"):
         heads = [clean(th.get_text()) for th in tbl.find_all("th")]
@@ -149,7 +148,7 @@ def parse_results(results_html: str):
         if not dep or not within_6m(dep):
             continue
 
-        # Cabin table is usually the very next row as a nested <table>
+        # Cabin table is usually the next <tr> with a nested table
         cabins = []
         if i + 1 < len(rows):
             sib = rows[i+1]
