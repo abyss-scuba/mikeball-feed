@@ -1,282 +1,51 @@
-Scrape Mike Ball availability by calling the RescoApi Ajax endpoint directly.
+name: Scrape Mike Ball Expeditions
 
-Flow:
-1) GET page -> extract ajaxurl (admin-ajax.php) and plugin JS URLs
-2) Discover the correct Ajax 'action' from plugin JS (prefer names containing search/avail)
-3) POST to admin-ajax.php with:
-     starts_at, ends_at  (long date strings), name='all', hide_unavailable=1, action=...
-4) Parse returned HTML table:
-   - Skip SOLD OUT
-   - Extract: expedition, departs, returns, price_from_aud, availability
-   - Parse following 'Cabin Type' table when present (cabins)
-5) Write mikeball_availability.json and mikeball_results_debug.html
-"""
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - scripts/scrape.py
+      - requirements.txt
+      - .github/workflows/scrape.yml
+  schedule:
+    - cron: "0 0 * * *"   # run daily at 00:00 UTC
+  workflow_dispatch:
 
-import json, re, sys
-from datetime import datetime, timedelta
-from zoneinfo import ZoneInfo
-from dateutil import parser as dateparser
-from bs4 import BeautifulSoup
-import requests
+permissions:
+  contents: write
 
-URL = "https://www.mikeball.com/availability-mike-ball-dive-expeditions/"
-TZ  = ZoneInfo("Australia/Sydney")
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    concurrency:
+      group: mikeball-feed
+      cancel-in-progress: true
 
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/122.0.0.0 Safari/537.36"
-    )
-}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: true
 
-# Best guesses for the WP AJAX action
-LIKELY_ACTION_NAMES = [
-    "resco_search_availability",
-    "ra_search_availability",
-    "resco_availability",
-    "ra_availability",
-    "search_availability",
-    "availability_search",
-    "get_availability",
-]
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.x"
 
-def log(msg): print(f"[scraper] {msg}", flush=True)
+      - name: Install Python deps
+        run: |
+          pip install --upgrade pip
+          pip install -r requirements.txt
 
-def clean(s: str) -> str:
-    return re.sub(r"\s+", " ", (s or "").strip())
+      - name: Run scraper
+        run: python scripts/scrape.py
 
-def parse_money_aud(text: str):
-    if not text: return None
-    m = re.search(r"([0-9][0-9,]*(?:\.\d{2})?)", text.replace(",", ""))
-    try:
-        return int(round(float(m.group(1)))) if m else None
-    except Exception:
-        return None
-
-def parse_date(text: str):
-    if not text: return None
-    try:
-        return dateparser.parse(text, dayfirst=True, fuzzy=True).date()
-    except Exception:
-        return None
-
-def within_6m(d):
-    if not d: return False
-    now = datetime.now(TZ).date()
-    six = now + timedelta(days=31*6)
-    return now <= d <= six
-
-def long_date(d):
-    # Page uses long format, e.g. "Friday 12 September 2025"
-    return d.strftime("%A %d %B %Y")
-
-def get_ajaxurl_and_js():
-    """Fetch the page and extract ajaxurl + Resco plugin JS URLs."""
-    r = requests.get(URL, headers=HEADERS, timeout=30)
-    r.raise_for_status()
-    html = r.text
-
-    # ajaxurl is defined in inline JS like: var rescoAjax = {"ajaxurl":"https:\/\/...\/admin-ajax.php"}
-    m = re.search(r'rescoAjax\s*=\s*\{\s*"ajaxurl"\s*:\s*"([^"]+admin-ajax\.php)"', html)
-    ajaxurl = m.group(1) if m else "https://www.mikeball.com/wp-admin/admin-ajax.php"
-    # de-escape \/ -> /
-    ajaxurl = ajaxurl.replace("\\/", "/")
-    log(f"ajaxurl: {ajaxurl}")
-
-    js_urls = re.findall(r'https?://[^"\']+/wp-content/plugins/RescoApi/assets/js/[^"\']+\.js', html)
-    if js_urls:
-        log(f"plugin js: {', '.join(js_urls[:2])}{' ...' if len(js_urls)>2 else ''}")
-    return ajaxurl, js_urls
-
-def discover_action_from_js(js_urls):
-    """
-    Inspect plugin JS; prefer actions containing 'search' or 'avail'.
-    Ignore actions like 'ra_expand_berths' which are not the search.
-    """
-    candidates = []
-    for js_url in js_urls:
-        try:
-            r = requests.get(js_url, headers=HEADERS, timeout=30)
-            if r.status_code != 200 or not r.text:
-                continue
-            js = r.text
-            # data: { action: 'something' } patterns
-            for m in re.finditer(r"action\s*:\s*['\"]([a-zA-Z0-9_:-]+)['\"]", js):
-                candidates.append(m.group(1))
-            # query string style: action=xyz
-            for m in re.finditer(r"action=([a-zA-Z0-9_:-]+)", js):
-                candidates.append(m.group(1))
-        except Exception:
-            continue
-
-    # Prefer a candidate that looks like a search/availability action
-    for c in candidates:
-        if re.search(r"(search|avail)", c, re.I):
-            log(f"discovered action in JS: {c}")
-            return c
-
-    # Otherwise return None and we'll try the fallback list
-    return None
-
-def try_post(ajaxurl, action, starts_at, ends_at):
-    """POST to admin-ajax.php using a candidate action. Return (html, ok)."""
-    data = {
-        "action": action,
-        "starts_at": starts_at,
-        "ends_at": ends_at,
-        "name": "all",           # -- ALL EXPEDITIONS --
-        "hide_unavailable": "1",
-    }
-    try:
-        r = requests.post(ajaxurl, headers=HEADERS, data=data, timeout=40)
-    except Exception as e:
-        log(f"post error for action={action}: {e}")
-        return ("", False)
-
-    text = r.text or ""
-    # Save last response for debugging if needed
-    with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
-        f.write(text)
-
-    # table present?
-    if r.status_code == 200 and "<table" in text and ("Departs" in text or "Returns" in text):
-        log(f"POST ok for action={action}")
-        return (text, True)
-
-    log(f"POST returned {r.status_code} for action={action}; table not detected")
-    return (text, False)
-
-def fetch_results_html():
-    """Main driver to obtain rendered results HTML via Ajax POST."""
-    ajaxurl, js_urls = get_ajaxurl_and_js()
-    today = datetime.now(TZ).date()
-    ends  = today + timedelta(days=31*6)
-    start_str = long_date(today)
-    end_str   = long_date(ends)
-
-    # 1) Try to discover action from JS
-    action = discover_action_from_js(js_urls)
-    if action:
-        html, ok = try_post(ajaxurl, action, start_str, end_str)
-        if ok:
-            return html, today, ends
-
-    # 2) Try fallback list
-    log("discovery failed or not valid; trying likely action names…")
-    for cand in LIKELY_ACTION_NAMES:
-        html, ok = try_post(ajaxurl, cand, start_str, end_str)
-        if ok:
-            log(f"success with action={cand}")
-            return html, today, ends
-
-    # 3) Give up (debug HTML already saved)
-    log("failed to obtain results from Ajax endpoint")
-    return "", today, ends
-
-def parse_results(results_html: str):
-    if not results_html:
-        return []
-
-    soup = BeautifulSoup(results_html, "html.parser")
-
-    # Find table with Departs & Returns
-    table = None
-    for tbl in soup.find_all("table"):
-        heads = [clean(th.get_text()) for th in tbl.find_all("th")]
-        hdr = " | ".join(heads).lower()
-        if "depart" in hdr and "return" in hdr:
-            table = tbl
-            break
-    if not table:
-        return []
-
-    trips = []
-    rows = table.find_all("tr")
-
-    for i, tr in enumerate(rows):
-        tds = tr.find_all("td")
-        if not tds:
-            continue
-        row_text = clean(tr.get_text()).lower()
-        if "sold out" in row_text:
-            continue
-
-        cols = [clean(td.get_text()) for td in tds]
-        if len(cols) < 4:
-            continue
-
-        expedition  = cols[0]
-        departs_txt = cols[1] if len(cols) >= 2 else ""
-        returns_txt = cols[2] if len(cols) >= 3 else ""
-        price_txt   = cols[3] if len(cols) >= 4 else ""
-        avail_txt   = cols[4] if len(cols) >= 5 else ""
-
-        dep = parse_date(departs_txt)
-        ret = parse_date(returns_txt)
-        if not dep or not within_6m(dep):
-            continue
-
-        # Cabin breakdown often in next <tr> as nested table
-        cabins = []
-        if i + 1 < len(rows):
-            sib = rows[i + 1]
-            cab_tbl = sib.find("table")
-            if cab_tbl and cab_tbl.find("th", string=re.compile(r"cabin type", re.I)):
-                for r in cab_tbl.find_all("tr"):
-                    ctd = [clean(x.get_text()) for x in r.find_all("td")]
-                    if not ctd:
-                        continue
-                    ctype = ctd[0]
-                    berths = None
-                    price_aud = None
-                    for cell in ctd[1:]:
-                        m = re.search(r"(\d+)\s*(?:berths?|left|avail)", cell.lower())
-                        if m: berths = int(m.group(1))
-                        p = parse_money_aud(cell)
-                        if p: price_aud = p
-                    if ctype:
-                        cabins.append({
-                            "cabin_type": ctype,
-                            "berths_left": berths,
-                            "price_aud": price_aud
-                        })
-
-        trips.append({
-            "expedition": expedition or None,
-            "departs": dep.isoformat(),
-            "returns": ret.isoformat() if ret else None,
-            "price_from_aud": parse_money_aud(price_txt),
-            "availability": avail_txt or None,
-            "cabins": cabins
-        })
-
-    # De-dup & sort
-    seen, out = set(), []
-    for t in trips:
-        key = (t["expedition"], t["departs"], t["returns"])
-        if key not in seen:
-            seen.add(key); out.append(t)
-    out.sort(key=lambda x: x["departs"] or "9999-12-31")
-    return out
-
-def main():
-    html, start_date, end_date = fetch_results_html()
-    trips = parse_results(html)
-    payload = {
-        "source_url": URL,
-        "generated_at": datetime.now(TZ).isoformat(timespec="seconds"),
-        "window_start": start_date.isoformat(),
-        "window_end": end_date.isoformat(),
-        "trips": trips
-    }
-    with open("mikeball_availability.json", "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False, indent=2)
-    log(f"✅ wrote mikeball_availability.json with {len(trips)} trips")
-
-if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print("FATAL:", e, file=sys.stderr)
-        sys.exit(1)
+      - name: Commit updated JSON
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Auto-update availability feed" || echo "No changes to commit"
+          git pull --rebase origin main || true
+          git push origin HEAD:main
