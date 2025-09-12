@@ -2,13 +2,19 @@
 # -*- coding: utf-8 -*-
 
 """
-Scrapes Mike Ball 'All Expeditions' with Playwright (headless Chromium).
-- Checks 'Hide unavailable expeditions'
-- Clicks Search
-- Waits for network to go idle
-- Parses the results table by headers 'Departs' & 'Returns'
-- Filters to next 6 months and skips SOLD OUT
-- Writes mikeball_availability.json
+Mike Ball availability scraper (RescoApi form-aware).
+
+Flow:
+- Open page with Playwright (headless Chromium)
+- Fill Start Date = today (Sydney), End Date = +6 months (long, human format)
+- Select Expedition = "all" (– ALL EXPEDITIONS –)
+- Tick "Hide unavailable expeditions"
+- Click the Search button (class .ra-ajax) so the plugin renders results into #availability-results
+- Wait for #availability-results table to appear
+- Parse rows: Expedition, Departs, Returns, Price From (AUD), Availability
+- Try to parse the following "Cabin Type" breakdown table per departure (if present)
+- Exclude SOLD OUT rows
+- Write mikeball_availability.json
 """
 
 import json, re, sys
@@ -16,7 +22,7 @@ from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from dateutil import parser as dateparser
 from bs4 import BeautifulSoup
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
 URL = "https://www.mikeball.com/availability-mike-ball-dive-expeditions/"
 TZ  = ZoneInfo("Australia/Sydney")
@@ -42,72 +48,104 @@ def within_next_six_months(d):
     six = now + timedelta(days=31*6)
     return now <= d <= six
 
-def get_full_html():
+def long_date(d):  # page expects long text (e.g., "Friday 12 September 2025")
+    return d.strftime("%A %d %B %Y")
+
+def get_results_html():
+    today = datetime.now(TZ).date()
+    end   = today + timedelta(days=31*6)
+
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page(viewport={"width": 1280, "height": 2200})
+        page = browser.new_page(viewport={"width": 1300, "height": 2200})
         page.goto(URL, wait_until="domcontentloaded", timeout=60000)
+        page.wait_for_timeout(800)
 
-        # small settle
-        page.wait_for_timeout(1200)
-
-        # Tick 'Hide unavailable expeditions'
+        # Fill dates by direct input (ids come from the HTML you pasted)
         try:
-            page.get_by_role("checkbox", name=re.compile(r"hide.*unavailable", re.I)).check()
+            page.fill("#starts_at", long_date(today))
+            page.fill("#ends_at",   long_date(end))
+        except Exception:
+            pass  # if ids ever change, the form may already default a range
+
+        # Select "-- ALL EXPEDITIONS --" (value="all")
+        try:
+            page.select_option("select[name='name']", value="all")
         except Exception:
             pass
 
-        # Click Search
+        # Tick "Hide unavailable expeditions"
         try:
-            page.get_by_role("button", name=re.compile(r"search", re.I)).click(timeout=2500)
+            page.check("input[name='hide_unavailable']")
         except Exception:
             pass
 
-        # Wait until XHRs settle
+        # Click Search (button with class ra-ajax)
         try:
-            page.wait_for_load_state("networkidle", timeout=20000)
+            page.click("button.ra-ajax", timeout=5000)
         except Exception:
+            # fallback: any button named Search
+            try:
+                page.get_by_role("button", name=re.compile(r"search", re.I)).click(timeout=3000)
+            except Exception:
+                pass
+
+        # Wait for the plugin to render the results into #availability-results
+        # First the container becomes non-empty, then a table appears.
+        try:
+            page.wait_for_selector("#availability-results", timeout=20000)
+            # ensure table with Departs/Returns headers exists
+            page.wait_for_selector(
+                "#availability-results table >> xpath=.//th[contains(.,'Departs')]",
+                timeout=20000
+            )
+        except PWTimeout:
+            # small grace period; some runs are just a bit slow
             page.wait_for_timeout(1500)
 
-        # Try expanding any 'See more' buttons (to reveal cabin tables)
+        # Expand "See more" links so cabin tables render (if present)
         try:
-            for btn in page.locator("text=/^\\s*See\\s*more\\s*$/i").all():
+            for btn in page.locator("#availability-results >> text=/^\\s*See\\s*more\\s*$/i").all():
                 try: btn.click(timeout=800)
                 except Exception: pass
-            page.wait_for_timeout(600)
+            page.wait_for_timeout(400)
         except Exception:
             pass
 
         html = page.content()
         browser.close()
-        return html
+        return html, today, end
 
 def parse_results(html: str):
     soup = BeautifulSoup(html, "html.parser")
+    root = soup.select_one("#availability-results")
+    if not root:
+        return []
 
-    # Find a table that has BOTH Departs and Returns in the header
-    target = None
-    for tbl in soup.find_all("table"):
+    # Find the first results table that has Departs and Returns
+    table = None
+    for tbl in root.find_all("table"):
         heads = [clean(th.get_text()) for th in tbl.find_all("th")]
-        hj = " | ".join(heads).lower()
-        if "depart" in hj and "return" in hj:
-            target = tbl
+        hdr = " | ".join(heads).lower()
+        if "depart" in hdr and "return" in hdr:
+            table = tbl
             break
-    if not target:
+    if not table:
         return []
 
     trips = []
-    for tr in target.find_all("tr"):
+    rows = table.find_all("tr")
+    for i, tr in enumerate(rows):
         tds = tr.find_all("td")
         if not tds:
             continue
 
-        row_text = clean(tr.get_text())
-        if "sold out" in row_text.lower():
+        row_text = clean(tr.get_text()).lower()
+        if "sold out" in row_text:
             continue
 
         cols = [clean(td.get_text()) for td in tds]
-        # Expect approx: [Expeditions, Departs, Returns, Price From (AUD), Availability, ...]
+        # Expected columns: [Expeditions..., Departs, Returns, Price From (AUD), Availability, (Enquire btn)]
         if len(cols) < 4:
             continue
 
@@ -122,10 +160,10 @@ def parse_results(html: str):
         if not dep or not within_next_six_months(dep):
             continue
 
-        # Cabin breakdown often sits in the next sibling row as a nested table
+        # Look for an immediate following row with a nested table having "Cabin Type"
         cabins = []
-        sib = tr.find_next_sibling("tr")
-        if sib:
+        if i + 1 < len(rows):
+            sib = rows[i+1]
             cab_tbl = sib.find("table")
             if cab_tbl and cab_tbl.find("th", string=re.compile(r"cabin type", re.I)):
                 for r in cab_tbl.find_all("tr"):
@@ -155,19 +193,24 @@ def parse_results(html: str):
             "cabins": cabins
         })
 
-    trips.sort(key=lambda x: x["departs"] or "9999-12-31")
-    return trips
+    # de-dup + sort
+    seen = set()
+    uniq = []
+    for t in trips:
+        key = (t["expedition"], t["departs"], t["returns"])
+        if key not in seen:
+            seen.add(key); uniq.append(t)
+    uniq.sort(key=lambda x: x["departs"] or "9999-12-31")
+    return uniq
 
 def main():
-    html = get_full_html()
+    html, start_date, end_date = get_results_html()
     trips = parse_results(html)
-    now = datetime.now(TZ).date()
-    six = now + timedelta(days=31*6)
     payload = {
         "source_url": URL,
         "generated_at": datetime.now(TZ).isoformat(timespec="seconds"),
-        "window_start": now.isoformat(),
-        "window_end": six.isoformat(),
+        "window_start": start_date.isoformat(),
+        "window_end": end_date.isoformat(),
         "trips": trips
     }
     with open("mikeball_availability.json", "w", encoding="utf-8") as f:
