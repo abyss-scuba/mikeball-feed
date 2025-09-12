@@ -1,0 +1,39 @@
+== Discovered actions from JS ==
+ra_expand_berths
+ra_search_availability
+== Try order ==
+- ra_search_availability
+- resco_search_availability
+- resco_availability
+- ra_availability
+- search_availability
+- availability_search
+- get_availability
+POST 200 action=ra_search_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name=all -> no match (len=178)
+POST 200 action=ra_search_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name= -> no match (len=178)
+POST 200 action=ra_search_availability dates=(2025-09-12|2026-03-17) name=all -> no match (len=178)
+POST 200 action=ra_search_availability dates=(2025-09-12|2026-03-17) name= -> no match (len=178)
+POST 400 action=resco_search_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name=all -> no match (len=1)
+POST 400 action=resco_search_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name= -> no match (len=1)
+POST 400 action=resco_search_availability dates=(2025-09-12|2026-03-17) name=all -> no match (len=1)
+POST 400 action=resco_search_availability dates=(2025-09-12|2026-03-17) name= -> no match (len=1)
+POST 400 action=resco_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name=all -> no match (len=1)
+POST 400 action=resco_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name= -> no match (len=1)
+POST 400 action=resco_availability dates=(2025-09-12|2026-03-17) name=all -> no match (len=1)
+POST 400 action=resco_availability dates=(2025-09-12|2026-03-17) name= -> no match (len=1)
+POST 400 action=ra_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name=all -> no match (len=1)
+POST 400 action=ra_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name= -> no match (len=1)
+POST 400 action=ra_availability dates=(2025-09-12|2026-03-17) name=all -> no match (len=1)
+POST 400 action=ra_availability dates=(2025-09-12|2026-03-17) name= -> no match (len=1)
+POST 400 action=search_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name=all -> no match (len=1)
+POST 400 action=search_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name= -> no match (len=1)
+POST 400 action=search_availability dates=(2025-09-12|2026-03-17) name=all -> no match (len=1)
+POST 400 action=search_availability dates=(2025-09-12|2026-03-17) name= -> no match (len=1)
+POST 400 action=availability_search dates=(Friday 12 September 2025|Tuesday 17 March 2026) name=all -> no match (len=1)
+POST 400 action=availability_search dates=(Friday 12 September 2025|Tuesday 17 March 2026) name= -> no match (len=1)
+POST 400 action=availability_search dates=(2025-09-12|2026-03-17) name=all -> no match (len=1)
+POST 400 action=availability_search dates=(2025-09-12|2026-03-17) name= -> no match (len=1)
+POST 400 action=get_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name=all -> no match (len=1)
+POST 400 action=get_availability dates=(Friday 12 September 2025|Tuesday 17 March 2026) name= -> no match (len=1)
+POST 400 action=get_availability dates=(2025-09-12|2026-03-17) name=all -> no match (len=1)
+POST 400 action=get_availability dates=(2025-09-12|2026-03-17) name= -> no match (len=1)
