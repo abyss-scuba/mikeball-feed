@@ -68,28 +68,34 @@ def fetch_ajax_html():
         except Exception:
             pass
 
-        # Identify the admin-ajax POST that returns the table
+        # Predicate for the admin-ajax response
         def is_availability_resp(resp):
-            return ("admin-ajax.php" in resp.url) and (resp.request.method == "POST")
+            return ("admin-ajax.php" in resp.url) and (resp.request.method.upper() == "POST")
 
-        # Click Search
+        # Click Search while *expecting* the response
+        body = ""
         try:
-            page.click("button.ra-ajax", timeout=5000)
-        except Exception:
-            try:
-                page.get_by_role("button", name=re.compile(r"search", re.I)).click(timeout=3000)
-            except Exception:
-                pass
-
-        # Wait for the admin-ajax response and grab body
-        try:
-            resp = page.wait_for_response(is_availability_resp, timeout=20000)
+            with page.expect_response(is_availability_resp, timeout=20000) as resp_info:
+                # primary button used by plugin
+                try:
+                    page.click("button.ra-ajax", timeout=5000)
+                except Exception:
+                    # fallback by role/name
+                    page.get_by_role("button", name=re.compile(r"search", re.I)).click(timeout=3000)
+            resp = resp_info.value
             body = resp.text()
         except PWTimeout:
-            body = ""
+            # last resort: wait for network idle and read results container if present
+            try:
+                page.wait_for_load_state("networkidle", timeout=5000)
+                # sometimes plugin also injects into #availability-results
+                body = page.inner_html("#availability-results")
+            except Exception:
+                body = ""
 
         browser.close()
-        # Save debug snapshot every run
+
+        # Always write a debug snapshot of what we got from admin-ajax
         with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
             f.write(body or "")
         return body, today, end
