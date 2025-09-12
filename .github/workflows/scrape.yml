@@ -8,7 +8,7 @@ on:
       - requirements.txt
       - .github/workflows/scrape.yml
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * *"   # run daily at 00:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -18,6 +18,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # optional: prevent overlapping runs
+    concurrency:
+      group: mikeball-feed
+      cancel-in-progress: true
 
     steps:
       - name: Checkout repo
@@ -30,7 +34,7 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install Python deps
+      - name: Install Python deps + Chromium
         run: |
           pip install -r requirements.txt
           python -m playwright install --with-deps chromium
@@ -44,4 +48,5 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "Auto-update availability feed" || echo "No changes to commit"
-          git push
+          git pull --rebase origin main || true
+          git push origin HEAD:main
