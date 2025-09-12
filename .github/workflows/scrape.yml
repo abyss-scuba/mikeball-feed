@@ -8,7 +8,7 @@ on:
       - requirements.txt
       - .github/workflows/scrape.yml
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "0 0 * * *"   # daily at 00:00 UTC
   workflow_dispatch:
 
 permissions:
