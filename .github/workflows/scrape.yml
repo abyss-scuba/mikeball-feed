@@ -8,7 +8,7 @@ on:
       - requirements.txt
       - .github/workflows/scrape.yml
   schedule:
-    - cron: "0 0 * * *"   # run daily at 00:00 UTC
+    - cron: "0 0 * * *"   # daily at 00:00 UTC
   workflow_dispatch:
 
 permissions:
@@ -18,7 +18,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 5
-    # optional: prevent overlapping runs
     concurrency:
       group: mikeball-feed
       cancel-in-progress: true
@@ -34,10 +33,10 @@ jobs:
         with:
           python-version: "3.x"
 
-      - name: Install Python deps + Chromium
+      - name: Install Python deps
         run: |
+          pip install --upgrade pip
           pip install -r requirements.txt
-          python -m playwright install --with-deps chromium
 
       - name: Run scraper
         run: python scripts/scrape.py
