@@ -33,10 +33,11 @@ def within_6m(d):
 
 def long_date(d): return d.strftime("%A %d %B %Y")  # e.g. Friday 12 September 2025
 
-def fetch_ajax_html():
+def fetch_ajax_or_dom_html():
+    """Drive the page, submit the form, and return either the admin-ajax HTML or the rendered results container."""
     today = datetime.now(TZ).date()
     end   = today + timedelta(days=31*6)
-
+    ajax_html = ""
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
         page = browser.new_page(
@@ -49,62 +50,70 @@ def fetch_ajax_html():
         page.goto(URL, wait_until="domcontentloaded", timeout=60000)
         page.wait_for_timeout(800)
 
-        # Fill Start/End
+        # Fill form fields
         try:
             page.fill("#starts_at", long_date(today))
             page.fill("#ends_at",   long_date(end))
         except Exception:
             pass
-
-        # Select ALL EXPEDITIONS
         try:
             page.select_option("select[name='name']", value="all")
         except Exception:
             pass
-
-        # Hide unavailable
         try:
             page.check("input[name='hide_unavailable']")
         except Exception:
             pass
 
-        # Predicate for the admin-ajax response
+        # Predicate for the admin-ajax POST used by the plugin
         def is_availability_resp(resp):
             return ("admin-ajax.php" in resp.url) and (resp.request.method.upper() == "POST")
 
-        # Click Search while *expecting* the response
-        body = ""
+        # Click Search while expecting the AJAX response
         try:
             with page.expect_response(is_availability_resp, timeout=20000) as resp_info:
-                # primary button used by plugin
                 try:
                     page.click("button.ra-ajax", timeout=5000)
                 except Exception:
-                    # fallback by role/name
                     page.get_by_role("button", name=re.compile(r"search", re.I)).click(timeout=3000)
             resp = resp_info.value
-            body = resp.text()
+            ajax_html = resp.text()
         except PWTimeout:
-            # last resort: wait for network idle and read results container if present
-            try:
-                page.wait_for_load_state("networkidle", timeout=5000)
-                # sometimes plugin also injects into #availability-results
-                body = page.inner_html("#availability-results")
-            except Exception:
-                body = ""
+            ajax_html = ""
+
+        # Fallback: if we didn’t catch the network, try the rendered container
+        dom_html = ""
+        try:
+            page.wait_for_load_state("networkidle", timeout=6000)
+            page.wait_for_selector("#availability-results", timeout=6000)
+            # Give any "See more" a click to reveal cabin tables
+            for btn in page.locator("#availability-results >> text=/^\\s*See\\s*more\\s*$/i").all():
+                try: btn.click(timeout=500)
+                except Exception: pass
+            # Extract the container HTML
+            dom_html = page.inner_html("#availability-results") or ""
+        except Exception:
+            dom_html = ""
+
+        # Optional screenshot for difficult cases
+        try:
+            page.screenshot(path="mikeball_results_screenshot.png", full_page=True)
+        except Exception:
+            pass
 
         browser.close()
 
-        # Always write a debug snapshot of what we got from admin-ajax
-        with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
-            f.write(body or "")
-        return body, today, end
+    # Save the best debug snapshot
+    debug = ajax_html if ajax_html else dom_html
+    with open("mikeball_results_debug.html", "w", encoding="utf-8") as f:
+        f.write(debug or "")
+    return (ajax_html or dom_html), today, end
 
 def parse_results(html: str):
     if not html: return []
     soup = BeautifulSoup(html, "html.parser")
 
-    # Find table that has Departs & Returns
+    # Find the results table that has Departs & Returns
     table = None
     for tbl in soup.find_all("table"):
         heads = [clean(th.get_text()) for th in tbl.find_all("th")]
@@ -177,7 +186,7 @@ def parse_results(html: str):
     return out
 
 def main():
-    html, start_date, end_date = fetch_ajax_html()
+    html, start_date, end_date = fetch_ajax_or_dom_html()
     trips = parse_results(html)
     payload = {
         "source_url": URL,
