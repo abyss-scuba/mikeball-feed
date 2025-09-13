@@ -3,7 +3,7 @@
 
 """
 Scrape Mike Ball Dive Expeditions availability (with cabins) by submitting
-the visible search form on the official site. No guessing AJAX/nonce needed.
+the visible search form on the official site.
 
 Defaults to a rolling window: start in 4 weeks, end in 26 weeks.
 Examples:
@@ -17,9 +17,9 @@ import json
 import re
 import sys
 from datetime import date, datetime, timedelta
-from typing import Optional, List, Dict
+from typing import Optional, List, Dict, Callable
 
-from playwright.sync_api import sync_playwright, Response
+from playwright.sync_api import sync_playwright, Response, BrowserContext
 
 SOURCE_URL = "https://www.mikeball.com/availability-mike-ball-dive-expeditions/"
 
@@ -111,31 +111,35 @@ def _close_datepickers(page):
     except:
         pass
 
-def _wait_for_ajax_and_inject(page) -> None:
+def _wait_for_ajax_and_inject_via_context(page, ctx: BrowserContext, timeout_ms: int = 60000) -> None:
     """
-    Wait for the admin-ajax.php response that carries the availability HTML.
-    If the page didn't populate #availability-results, inject it ourselves.
+    Wait for the admin-ajax.php response (action=ra_search_availability) using the
+    BROWSER CONTEXT (works across Playwright versions). If the page didn't populate
+    #availability-results, inject the returned HTML manually.
     """
     def is_target(r: Response) -> bool:
-        if "admin-ajax.php" not in r.url:
-            return False
-        if r.request.method != "POST":
-            return False
         try:
+            if "admin-ajax.php" not in r.url:
+                return False
+            if r.request.method != "POST":
+                return False
             pd = r.request.post_data or ""
+            return ("ra_search_availability" in pd) and (r.status == 200)
         except:
-            pd = ""
-        return "ra_search_availability" in pd
+            return False
 
-    resp = page.wait_for_response(is_target, timeout=60000)
-    html = resp.text()
+    try:
+        resp: Response = ctx.wait_for_event("response", predicate=is_target, timeout=timeout_ms)
+        html = resp.text()
+    except Exception:
+        html = ""
 
-    # If DOM didn't populate, inject
+    # If DOM didn't populate, inject the HTML we captured
     try:
         has_rows = page.evaluate("() => document.querySelectorAll('#availability-results table tbody tr').length > 0")
     except:
         has_rows = False
-    if not has_rows and html:
+    if (not has_rows) and html:
         page.evaluate(
             """(html) => {
                 const tgt = document.querySelector('#availability-results');
@@ -144,8 +148,11 @@ def _wait_for_ajax_and_inject(page) -> None:
             html
         )
 
-def perform_search(page, start_d: date, end_d: date):
-    """Open page, fill dates, set expedition=ALL, close pickers, submit search, ensure results HTML present, expand cabins."""
+def perform_search(page, ctx: BrowserContext, start_d: date, end_d: date):
+    """
+    Open page, fill dates, set expedition=ALL, close pickers, submit search,
+    ensure results HTML present (network or DOM fallback), expand cabins.
+    """
     page.goto(SOURCE_URL, wait_until="domcontentloaded")
     page.wait_for_timeout(800)
 
@@ -191,13 +198,13 @@ def perform_search(page, start_d: date, end_d: date):
     try:
         page.click("button.ra-ajax", timeout=25000)
     except:
-        # If the overlay momentarily blocks, we've already submitted via form event above
+        # If an overlay momentarily blocks, we already submitted via the form dispatch above
         pass
 
-    # Wait for the AJAX response and inject if needed
-    _wait_for_ajax_and_inject(page)
+    # Wait for the AJAX response (context-level) and inject if needed
+    _wait_for_ajax_and_inject_via_context(page, ctx, timeout_ms=70000)
 
-    # As a final guard, wait up to 20s for at least one row to exist
+    # As a final guard, also wait up to 20s for at least one row to exist (pure DOM fallback)
     page.wait_for_function(
         "document.querySelectorAll('#availability-results table tbody tr').length > 0",
         timeout=20000
@@ -291,7 +298,7 @@ def run_scrape(start_date: date, end_date: date, headful: bool=False) -> Dict:
         page.set_default_timeout(30000)
 
         try:
-            perform_search(page, start_date, end_date)
+            perform_search(page, ctx, start_date, end_date)
             trips = extract_from_results(page, start_date, end_date)
         except Exception as e:
             # Debug artifacts
