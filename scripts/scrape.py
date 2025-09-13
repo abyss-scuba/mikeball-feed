@@ -79,10 +79,11 @@ def fmt_picker(d: date) -> str:
     return d.strftime("%A %d %B %Y")
 
 def _fire_input_change(page, start_txt: str, end_txt: str):
-    # Set values and dispatch events the plugin listens for
+    """Set values on inputs and dispatch input/change/keyup so the plugin reacts."""
     page.evaluate(
         """
-        (s,e) => {
+        (args) => {
+          const { s, e } = args;
           function fire(el){
             ['input','change','keyup'].forEach(ev => el.dispatchEvent(new Event(ev, {bubbles:true})));
           }
@@ -92,7 +93,7 @@ def _fire_input_change(page, start_txt: str, end_txt: str):
           if (b) { b.value = e; fire(b); }
         }
         """,
-        start_txt, end_txt
+        {"s": start_txt, "e": end_txt}
     )
 
 def _close_datepickers(page):
