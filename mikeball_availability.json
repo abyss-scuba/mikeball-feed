@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2025-10-01T08:02:18.924237",
+  "scrapedAt": "2025-10-01T17:32:31.829379",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2025-10-08",
   "window_end": "2026-07-28",
@@ -54,6 +54,58 @@
           },
           "price": "$6,688",
           "price_num": 6688
+        }
+      ]
+    },
+    {
+      "expedition": "4 Night - Fly Dive Coral Sea",
+      "departs": "Thu 16 Oct 2025",
+      "returns": "Mon 20 Oct 2025",
+      "price_from_aud": "$2,700",
+      "price_from_num": 2700,
+      "availability": "1 Hurry",
+      "availability_parsed": {
+        "raw": "1 Hurry",
+        "count": 1,
+        "hurry": true
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$2,700",
+          "price_num": 2700
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$3,100",
+          "price_num": 3100
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
+          },
+          "price": "$3,430",
+          "price_num": 3430
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$3,757",
+          "price_num": 3757
         }
       ]
     },
@@ -960,8 +1012,9 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$4,388",
           "price_num": 4388
