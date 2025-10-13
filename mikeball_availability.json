@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2025-10-13T17:31:53.357252",
+  "scrapedAt": "2025-10-14T08:01:44.360032",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2025-10-20",
-  "window_end": "2026-08-09",
+  "window_start": "2025-10-21",
+  "window_end": "2026-08-10",
   "trips": [
     {
       "expedition": "7 Night Far North Coral Sea Exploratory",
@@ -263,16 +263,67 @@
       ]
     },
     {
+      "expedition": "7 Night - Coral Sea Safari",
+      "departs": "Thu 08 Jan 2026",
+      "returns": "Thu 15 Jan 2026",
+      "price_from_aud": "$4,355",
+      "price_from_num": 4355,
+      "availability": "2 Hurry",
+      "availability_parsed": {
+        "raw": "2 Hurry",
+        "count": 2,
+        "hurry": true
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$4,573",
+          "price_num": 4573
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
+          },
+          "price": "$5,367",
+          "price_num": 5367
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$6,143",
+          "price_num": 6143
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$6,688",
+          "price_num": 6688
+        }
+      ]
+    },
+    {
       "expedition": "3 Night - Fly Dive Cod Hole",
       "departs": "Mon 12 Jan 2026",
       "returns": "Thu 15 Jan 2026",
       "price_from_aud": "$2,385",
       "price_from_num": 2385,
-      "availability": "6 Hurry",
+      "availability": "10+ -",
       "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
-        "hurry": true
+        "raw": "10+ -",
+        "count": 10
       },
       "cabins": [
         {
