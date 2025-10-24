@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2025-10-24T08:01:35.866563",
+  "scrapedAt": "2025-10-24T17:39:26.478918",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2025-10-31",
   "window_end": "2026-08-20",
@@ -163,10 +163,10 @@
       "returns": "Thu 15 Jan 2026",
       "price_from_aud": "$2,385",
       "price_from_num": 2385,
-      "availability": "9 -",
+      "availability": "7 -",
       "availability_parsed": {
-        "raw": "9 -",
-        "count": 9
+        "raw": "7 -",
+        "count": 7
       },
       "cabins": [
         {
@@ -191,8 +191,9 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$3,111",
           "price_num": 3111
