@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2025-10-31T17:31:37.109608",
+  "scrapedAt": "2025-11-01T08:01:38.246962",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2025-11-07",
-  "window_end": "2026-08-27",
+  "window_start": "2025-11-08",
+  "window_end": "2026-08-28",
   "trips": [
     {
       "expedition": "7 Night - Northern Exposure South Bound",
@@ -1544,18 +1544,19 @@
       "returns": "Thu 23 Jul 2026",
       "price_from_aud": "$2,540",
       "price_from_num": 2540,
-      "availability": "3 Hurry",
+      "availability": "1 Hurry",
       "availability_parsed": {
-        "raw": "3 Hurry",
-        "count": 3,
+        "raw": "1 Hurry",
+        "count": 1,
         "hurry": true
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$2,540",
           "price_num": 2540
