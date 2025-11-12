@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2025-11-12T08:01:41.749118",
+  "scrapedAt": "2025-11-12T18:03:33.807717",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2025-11-19",
   "window_end": "2026-09-08",
@@ -10,10 +10,10 @@
       "returns": "Thu 11 Dec 2025",
       "price_from_aud": "$5,029",
       "price_from_num": 5029,
-      "availability": "4 Hurry",
+      "availability": "6 Hurry",
       "availability_parsed": {
-        "raw": "4 Hurry",
-        "count": 4,
+        "raw": "6 Hurry",
+        "count": 6,
         "hurry": true
       },
       "cabins": [
@@ -48,9 +48,8 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
+            "raw": "2+",
+            "count": 2
           },
           "price": "$7,244",
           "price_num": 7244
@@ -258,8 +257,9 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$3,404",
           "price_num": 3404
@@ -482,19 +482,18 @@
       "returns": "Thu 29 Jan 2026",
       "price_from_aud": "$4,355",
       "price_from_num": 4355,
-      "availability": "6 Hurry",
+      "availability": "5 Hurry",
       "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
+        "raw": "5 Hurry",
+        "count": 5,
         "hurry": true
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$4,573",
           "price_num": 4573
@@ -534,19 +533,18 @@
       "returns": "Thu 29 Jan 2026",
       "price_from_aud": "$2,385",
       "price_from_num": 2385,
-      "availability": "6 Hurry",
+      "availability": "5 Hurry",
       "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
+        "raw": "5 Hurry",
+        "count": 5,
         "hurry": true
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$2,385",
           "price_num": 2385
@@ -815,9 +813,8 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
+            "raw": "2+",
+            "count": 2
           },
           "price": "$7,007",
           "price_num": 7007
