@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2025-11-14T08:01:42.549668",
+  "scrapedAt": "2025-11-14T17:31:34.275538",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2025-11-21",
   "window_end": "2026-09-10",
@@ -155,110 +155,6 @@
           "berths_left": {
             "raw": "2+",
             "count": 2
-          },
-          "price": "$6,688",
-          "price_num": 6688
-        }
-      ]
-    },
-    {
-      "expedition": "4 Night - Fly Dive Coral Sea",
-      "departs": "Thu 08 Jan 2026",
-      "returns": "Mon 12 Jan 2026",
-      "price_from_aud": "$2,700",
-      "price_from_num": 2700,
-      "availability": "2 Hurry",
-      "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$2,700",
-          "price_num": 2700
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$3,100",
-          "price_num": 3100
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$3,430",
-          "price_num": 3430
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
-          },
-          "price": "$3,757",
-          "price_num": 3757
-        }
-      ]
-    },
-    {
-      "expedition": "7 Night - Coral Sea Safari",
-      "departs": "Thu 08 Jan 2026",
-      "returns": "Thu 15 Jan 2026",
-      "price_from_aud": "$4,355",
-      "price_from_num": 4355,
-      "availability": "2 Hurry",
-      "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$4,573",
-          "price_num": 4573
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$5,367",
-          "price_num": 5367
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$6,143",
-          "price_num": 6143
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
           },
           "price": "$6,688",
           "price_num": 6688
