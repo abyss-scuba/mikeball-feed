@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2025-11-18T08:01:46.911381",
+  "scrapedAt": "2025-11-19T08:01:44.308821",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2025-11-25",
-  "window_end": "2026-09-14",
+  "window_start": "2025-11-26",
+  "window_end": "2026-09-15",
   "trips": [
     {
       "expedition": "7 Night - Northern Exposure South Bound",
@@ -10,10 +10,10 @@
       "returns": "Thu 11 Dec 2025",
       "price_from_aud": "$5,029",
       "price_from_num": 5029,
-      "availability": "6 Hurry",
+      "availability": "4 Hurry",
       "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
+        "raw": "4 Hurry",
+        "count": 4,
         "hurry": true
       },
       "cabins": [
@@ -38,9 +38,8 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$6,674",
           "price_num": 6674
@@ -62,9 +61,9 @@
       "returns": "Tue 23 Dec 2025",
       "price_from_aud": "$3,267",
       "price_from_num": 3267,
-      "availability": "10+ -",
+      "availability": "10 -",
       "availability_parsed": {
-        "raw": "10+ -",
+        "raw": "10 -",
         "count": 10
       },
       "cabins": [
@@ -81,8 +80,8 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
+            "raw": "1 Hurry",
+            "count": 1,
             "hurry": true
           },
           "price": "$3,833",
@@ -378,10 +377,10 @@
       "returns": "Thu 29 Jan 2026",
       "price_from_aud": "$4,355",
       "price_from_num": 4355,
-      "availability": "5 Hurry",
+      "availability": "3 Hurry",
       "availability_parsed": {
-        "raw": "5 Hurry",
-        "count": 5,
+        "raw": "3 Hurry",
+        "count": 3,
         "hurry": true
       },
       "cabins": [
@@ -482,10 +481,10 @@
       "returns": "Thu 29 Jan 2026",
       "price_from_aud": "$2,385",
       "price_from_num": 2385,
-      "availability": "5 Hurry",
+      "availability": "3 Hurry",
       "availability_parsed": {
-        "raw": "5 Hurry",
-        "count": 5,
+        "raw": "3 Hurry",
+        "count": 3,
         "hurry": true
       },
       "cabins": [
