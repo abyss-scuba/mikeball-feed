@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2025-12-01T08:01:52.955556",
+  "scrapedAt": "2025-12-01T17:31:50.769392",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2025-12-08",
   "window_end": "2026-09-27",
@@ -91,8 +91,9 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$4,388",
           "price_num": 4388
@@ -166,10 +167,10 @@
       "returns": "Mon 12 Jan 2026",
       "price_from_aud": "$2,700",
       "price_from_num": 2700,
-      "availability": "3 Hurry",
+      "availability": "1 Hurry",
       "availability_parsed": {
-        "raw": "3 Hurry",
-        "count": 3,
+        "raw": "1 Hurry",
+        "count": 1,
         "hurry": true
       },
       "cabins": [
@@ -204,9 +205,8 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$3,757",
           "price_num": 3757
@@ -271,19 +271,18 @@
       "returns": "Thu 15 Jan 2026",
       "price_from_aud": "$2,385",
       "price_from_num": 2385,
-      "availability": "2 Hurry",
+      "availability": "1 Hurry",
       "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
+        "raw": "1 Hurry",
+        "count": 1,
         "hurry": true
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$2,385",
           "price_num": 2385
@@ -369,119 +368,15 @@
       ]
     },
     {
-      "expedition": "7 Night - Coral Sea Safari",
-      "departs": "Thu 15 Jan 2026",
-      "returns": "Thu 22 Jan 2026",
-      "price_from_aud": "$4,355",
-      "price_from_num": 4355,
-      "availability": "2 Hurry",
-      "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$4,573",
-          "price_num": 4573
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$5,367",
-          "price_num": 5367
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
-          },
-          "price": "$6,143",
-          "price_num": 6143
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$6,688",
-          "price_num": 6688
-        }
-      ]
-    },
-    {
-      "expedition": "3 Night - Fly Dive Cod Hole",
-      "departs": "Mon 19 Jan 2026",
-      "returns": "Thu 22 Jan 2026",
-      "price_from_aud": "$2,385",
-      "price_from_num": 2385,
-      "availability": "2 Hurry",
-      "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$2,385",
-          "price_num": 2385
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$2,761",
-          "price_num": 2761
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
-          },
-          "price": "$3,111",
-          "price_num": 3111
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$3,404",
-          "price_num": 3404
-        }
-      ]
-    },
-    {
       "expedition": "4 Night - Fly Dive Coral Sea",
       "departs": "Thu 22 Jan 2026",
       "returns": "Mon 26 Jan 2026",
       "price_from_aud": "$2,700",
       "price_from_num": 2700,
-      "availability": "10+ -",
+      "availability": "9 -",
       "availability_parsed": {
-        "raw": "10+ -",
-        "count": 10
+        "raw": "9 -",
+        "count": 9
       },
       "cabins": [
         {
@@ -506,9 +401,8 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$3,430",
           "price_num": 3430
@@ -516,9 +410,8 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$3,757",
           "price_num": 3757
@@ -1287,67 +1180,15 @@
       ]
     },
     {
-      "expedition": "7 Night - Minke Whale",
-      "departs": "Thu 04 Jun 2026",
-      "returns": "Thu 11 Jun 2026",
-      "price_from_aud": "$4,916",
-      "price_from_num": 4916,
-      "availability": "2 Hurry",
-      "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$4,916",
-          "price_num": 4916
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$5,769",
-          "price_num": 5769
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$6,604",
-          "price_num": 6604
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
-          },
-          "price": "$7,189",
-          "price_num": 7189
-        }
-      ]
-    },
-    {
       "expedition": "4 Night - Fly Dive Minke Whale",
       "departs": "Thu 04 Jun 2026",
       "returns": "Mon 08 Jun 2026",
       "price_from_aud": "$2,875",
       "price_from_num": 2875,
-      "availability": "6 Hurry",
+      "availability": "4 Hurry",
       "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
+        "raw": "4 Hurry",
+        "count": 4,
         "hurry": true
       },
       "cabins": [
@@ -1383,63 +1224,12 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
-          },
-          "price": "$4,001",
-          "price_num": 4001
-        }
-      ]
-    },
-    {
-      "expedition": "3 Night - Fly Dive Minke Whale",
-      "departs": "Mon 08 Jun 2026",
-      "returns": "Thu 11 Jun 2026",
-      "price_from_aud": "$2,540",
-      "price_from_num": 2540,
-      "availability": "2 Hurry",
-      "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$2,540",
-          "price_num": 2540
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$2,940",
-          "price_num": 2940
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$3,313",
-          "price_num": 3313
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
             "raw": "2 Hurry",
             "count": 2,
             "hurry": true
           },
-          "price": "$3,624",
-          "price_num": 3624
+          "price": "$4,001",
+          "price_num": 4001
         }
       ]
     },
@@ -1495,112 +1285,6 @@
           },
           "price": "$3,624",
           "price_num": 3624
-        }
-      ]
-    },
-    {
-      "expedition": "4 Night - Fly Dive Minke Whale",
-      "departs": "Thu 18 Jun 2026",
-      "returns": "Mon 22 Jun 2026",
-      "price_from_aud": "$2,875",
-      "price_from_num": 2875,
-      "availability": "5 Hurry",
-      "availability_parsed": {
-        "raw": "5 Hurry",
-        "count": 5,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
-          },
-          "price": "$2,875",
-          "price_num": 2875
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
-          },
-          "price": "$3,301",
-          "price_num": 3301
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
-          },
-          "price": "$3,653",
-          "price_num": 3653
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$4,001",
-          "price_num": 4001
-        }
-      ]
-    },
-    {
-      "expedition": "7 Night - Minke Whale",
-      "departs": "Thu 18 Jun 2026",
-      "returns": "Thu 25 Jun 2026",
-      "price_from_aud": "$4,916",
-      "price_from_num": 4916,
-      "availability": "2 Hurry",
-      "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$4,916",
-          "price_num": 4916
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
-          },
-          "price": "$5,769",
-          "price_num": 5769
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$6,604",
-          "price_num": 6604
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$7,189",
-          "price_num": 7189
         }
       ]
     },
@@ -2130,9 +1814,8 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$4,802",
           "price_num": 4802
