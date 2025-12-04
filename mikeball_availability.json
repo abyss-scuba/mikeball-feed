@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2025-12-04T08:01:38.264843",
+  "scrapedAt": "2025-12-04T17:31:41.757496",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2025-12-11",
   "window_end": "2026-09-30",
@@ -39,8 +39,8 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
+            "raw": "1 Hurry",
+            "count": 1,
             "hurry": true
           },
           "price": "$4,388",
