@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2025-12-08T17:31:47.753044",
+  "scrapedAt": "2025-12-09T08:01:55.564919",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2025-12-15",
-  "window_end": "2026-10-04",
+  "window_start": "2025-12-16",
+  "window_end": "2026-10-05",
   "trips": [
     {
       "expedition": "5 night Coral Sea & Cod Hole",
@@ -2162,10 +2162,10 @@
       "returns": "Mon 05 Oct 2026",
       "price_from_aud": "$2,835",
       "price_from_num": 2835,
-      "availability": "2 Hurry",
+      "availability": "3 Hurry",
       "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
+        "raw": "3 Hurry",
+        "count": 3,
         "hurry": true
       },
       "cabins": [
@@ -2259,6 +2259,57 @@
           },
           "price": "$7,022",
           "price_num": 7022
+        }
+      ]
+    },
+    {
+      "expedition": "3 Night - Fly Dive Cod Hole",
+      "departs": "Mon 05 Oct 2026",
+      "returns": "Thu 08 Oct 2026",
+      "price_from_aud": "$2,504",
+      "price_from_num": 2504,
+      "availability": "10+ -",
+      "availability_parsed": {
+        "raw": "10+ -",
+        "count": 10
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
+          },
+          "price": "$2,504",
+          "price_num": 2504
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$2,899",
+          "price_num": 2899
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$3,266",
+          "price_num": 3266
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$3,574",
+          "price_num": 3574
         }
       ]
     }
