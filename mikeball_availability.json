@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2025-12-08T08:01:47.146423",
+  "scrapedAt": "2025-12-08T17:31:47.753044",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2025-12-15",
   "window_end": "2026-10-04",
@@ -204,8 +204,9 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$3,757",
           "price_num": 3757
@@ -1816,8 +1817,9 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$2,835",
           "price_num": 2835
@@ -1866,8 +1868,9 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$4,802",
           "price_num": 4802
@@ -2169,8 +2172,9 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$2,835",
           "price_num": 2835
@@ -2211,18 +2215,19 @@
       "returns": "Thu 08 Oct 2026",
       "price_from_aud": "$4,802",
       "price_from_num": 4802,
-      "availability": "2 Hurry",
+      "availability": "3 Hurry",
       "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
+        "raw": "3 Hurry",
+        "count": 3,
         "hurry": true
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$4,802",
           "price_num": 4802
