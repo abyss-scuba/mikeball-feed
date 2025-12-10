@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2025-12-10T18:24:38.220469",
+  "scrapedAt": "2025-12-11T08:01:46.415036",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2025-12-17",
-  "window_end": "2026-10-06",
+  "window_start": "2025-12-18",
+  "window_end": "2026-10-07",
   "trips": [
     {
       "expedition": "5 night Coral Sea & Cod Hole",
@@ -1090,10 +1090,10 @@
       "returns": "Thu 18 Jun 2026",
       "price_from_aud": "$2,540",
       "price_from_num": 2540,
-      "availability": "6 Hurry",
+      "availability": "4 Hurry",
       "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
+        "raw": "4 Hurry",
+        "count": 4,
         "hurry": true
       },
       "cabins": [
