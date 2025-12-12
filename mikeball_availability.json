@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2025-12-12T08:01:43.773378",
+  "scrapedAt": "2025-12-12T17:31:55.166846",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2025-12-19",
   "window_end": "2026-10-08",
@@ -10,10 +10,10 @@
       "returns": "Tue 06 Jan 2026",
       "price_from_aud": "$4,573",
       "price_from_num": 4573,
-      "availability": "4 Hurry",
+      "availability": "3 Hurry",
       "availability_parsed": {
-        "raw": "4 Hurry",
-        "count": 4,
+        "raw": "3 Hurry",
+        "count": 3,
         "hurry": true
       },
       "cabins": [
@@ -29,8 +29,8 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
+            "raw": "1 Hurry",
+            "count": 1,
             "hurry": true
           },
           "price": "$5,367",
@@ -134,8 +134,9 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$3,100",
           "price_num": 3100
@@ -1059,8 +1060,9 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$2,940",
           "price_num": 2940
@@ -1309,9 +1311,8 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$3,430",
           "price_num": 3430
