@@ -1,19 +1,19 @@
 {
-  "scrapedAt": "2025-12-31T17:32:32.677233",
+  "scrapedAt": "2026-01-02T10:58:30.753356",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-01-07",
-  "window_end": "2026-10-27",
+  "window_start": "2026-01-09",
+  "window_end": "2026-10-29",
   "trips": [
     {
-      "expedition": "4 Night - Fly Dive Coral Sea",
-      "departs": "Thu 08 Jan 2026",
-      "returns": "Mon 12 Jan 2026",
-      "price_from_aud": "$2,700",
-      "price_from_num": 2700,
-      "availability": "1 Hurry",
+      "expedition": "3 Night - Fly Dive Cod Hole",
+      "departs": "Mon 12 Jan 2026",
+      "returns": "Thu 15 Jan 2026",
+      "price_from_aud": "$2,385",
+      "price_from_num": 2385,
+      "availability": "2 Hurry",
       "availability_parsed": {
-        "raw": "1 Hurry",
-        "count": 1,
+        "raw": "2 Hurry",
+        "count": 2,
         "hurry": true
       },
       "cabins": [
@@ -23,8 +23,8 @@
             "raw": "SOLD OUT",
             "status": "SOLD OUT"
           },
-          "price": "$2,700",
-          "price_num": 2700
+          "price": "$2,385",
+          "price_num": 2385
         },
         {
           "cabin_type": "Club - per person, share cabin",
@@ -32,27 +32,27 @@
             "raw": "SOLD OUT",
             "status": "SOLD OUT"
           },
-          "price": "$3,100",
-          "price_num": 3100
+          "price": "$2,761",
+          "price_num": 2761
         },
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
-          "price": "$3,430",
-          "price_num": 3430
+          "price": "$3,111",
+          "price_num": 3111
         },
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
-          "price": "$3,757",
-          "price_num": 3757
+          "price": "$3,404",
+          "price_num": 3404
         }
       ]
     },
@@ -842,8 +842,9 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$3,430",
           "price_num": 3430
@@ -934,10 +935,10 @@
       "returns": "Mon 08 Jun 2026",
       "price_from_aud": "$2,875",
       "price_from_num": 2875,
-      "availability": "2 Hurry",
+      "availability": "1 Hurry",
       "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
+        "raw": "1 Hurry",
+        "count": 1,
         "hurry": true
       },
       "cabins": [
@@ -963,9 +964,8 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$3,653",
           "price_num": 3653
@@ -987,19 +987,18 @@
       "returns": "Thu 18 Jun 2026",
       "price_from_aud": "$2,540",
       "price_from_num": 2540,
-      "availability": "2 Hurry",
+      "availability": "1 Hurry",
       "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
+        "raw": "1 Hurry",
+        "count": 1,
         "hurry": true
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$2,540",
           "price_num": 2540
@@ -1342,56 +1341,6 @@
       ]
     },
     {
-      "expedition": "4 Night - Fly Dive Coral Sea",
-      "departs": "Thu 13 Aug 2026",
-      "returns": "Mon 17 Aug 2026",
-      "price_from_aud": "$2,835",
-      "price_from_num": 2835,
-      "availability": "10+ -",
-      "availability_parsed": {
-        "raw": "10+ -",
-        "count": 10
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "2+",
-            "count": 2
-          },
-          "price": "$2,835",
-          "price_num": 2835
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "2+",
-            "count": 2
-          },
-          "price": "$3,255",
-          "price_num": 3255
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "2+",
-            "count": 2
-          },
-          "price": "$3,602",
-          "price_num": 3602
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "2+",
-            "count": 2
-          },
-          "price": "$3,945",
-          "price_num": 3945
-        }
-      ]
-    },
-    {
       "expedition": "7 Night - Coral Sea Safari",
       "departs": "Thu 13 Aug 2026",
       "returns": "Thu 20 Aug 2026",
@@ -1438,6 +1387,56 @@
           },
           "price": "$7,022",
           "price_num": 7022
+        }
+      ]
+    },
+    {
+      "expedition": "4 Night - Fly Dive Coral Sea",
+      "departs": "Thu 13 Aug 2026",
+      "returns": "Mon 17 Aug 2026",
+      "price_from_aud": "$2,835",
+      "price_from_num": 2835,
+      "availability": "10+ -",
+      "availability_parsed": {
+        "raw": "10+ -",
+        "count": 10
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$2,835",
+          "price_num": 2835
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$3,255",
+          "price_num": 3255
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$3,602",
+          "price_num": 3602
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$3,945",
+          "price_num": 3945
         }
       ]
     },
@@ -1787,58 +1786,9 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
-          },
-          "price": "$7,022",
-          "price_num": 7022
-        }
-      ]
-    },
-    {
-      "expedition": "7 Night - Coral Sea Safari",
-      "departs": "Thu 17 Sep 2026",
-      "returns": "Thu 24 Sep 2026",
-      "price_from_aud": "$4,802",
-      "price_from_num": 4802,
-      "availability": "10+ -",
-      "availability_parsed": {
-        "raw": "10+ -",
-        "count": 10
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$4,802",
-          "price_num": 4802
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "2+",
-            "count": 2
-          },
-          "price": "$5,635",
-          "price_num": 5635
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "2+",
-            "count": 2
-          },
-          "price": "$6,450",
-          "price_num": 6450
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$7,022",
           "price_num": 7022
@@ -1896,6 +1846,56 @@
       ]
     },
     {
+      "expedition": "7 Night - Coral Sea Safari",
+      "departs": "Thu 17 Sep 2026",
+      "returns": "Thu 24 Sep 2026",
+      "price_from_aud": "$4,802",
+      "price_from_num": 4802,
+      "availability": "10+ -",
+      "availability_parsed": {
+        "raw": "10+ -",
+        "count": 10
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$4,802",
+          "price_num": 4802
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$5,635",
+          "price_num": 5635
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$6,450",
+          "price_num": 6450
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$7,022",
+          "price_num": 7022
+        }
+      ]
+    },
+    {
       "expedition": "3 Night - Fly Dive Cod Hole",
       "departs": "Mon 21 Sep 2026",
       "returns": "Thu 24 Sep 2026",
@@ -1943,58 +1943,6 @@
           },
           "price": "$3,574",
           "price_num": 3574
-        }
-      ]
-    },
-    {
-      "expedition": "7 Night - Coral Sea Safari",
-      "departs": "Thu 01 Oct 2026",
-      "returns": "Thu 08 Oct 2026",
-      "price_from_aud": "$4,802",
-      "price_from_num": 4802,
-      "availability": "1 Hurry",
-      "availability_parsed": {
-        "raw": "1 Hurry",
-        "count": 1,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
-          },
-          "price": "$4,802",
-          "price_num": 4802
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$5,635",
-          "price_num": 5635
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$6,450",
-          "price_num": 6450
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$7,022",
-          "price_num": 7022
         }
       ]
     },
@@ -2047,6 +1995,58 @@
           },
           "price": "$3,945",
           "price_num": 3945
+        }
+      ]
+    },
+    {
+      "expedition": "7 Night - Coral Sea Safari",
+      "departs": "Thu 01 Oct 2026",
+      "returns": "Thu 08 Oct 2026",
+      "price_from_aud": "$4,802",
+      "price_from_num": 4802,
+      "availability": "1 Hurry",
+      "availability_parsed": {
+        "raw": "1 Hurry",
+        "count": 1,
+        "hurry": true
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
+          },
+          "price": "$4,802",
+          "price_num": 4802
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$5,635",
+          "price_num": 5635
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$6,450",
+          "price_num": 6450
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$7,022",
+          "price_num": 7022
         }
       ]
     },
