@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-01-03T17:31:58.801127",
+  "scrapedAt": "2026-01-05T08:51:08.122964",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-01-10",
-  "window_end": "2026-10-30",
+  "window_start": "2026-01-12",
+  "window_end": "2026-11-01",
   "trips": [
     {
       "expedition": "3 Night - Fly Dive Cod Hole",
@@ -115,11 +115,10 @@
       "returns": "Mon 26 Jan 2026",
       "price_from_aud": "$2,700",
       "price_from_num": 2700,
-      "availability": "6 Hurry",
+      "availability": "8 -",
       "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
-        "hurry": true
+        "raw": "8 -",
+        "count": 8
       },
       "cabins": [
         {
@@ -155,8 +154,9 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$3,757",
           "price_num": 3757
@@ -169,10 +169,10 @@
       "returns": "Thu 29 Jan 2026",
       "price_from_aud": "$4,355",
       "price_from_num": 4355,
-      "availability": "2 Hurry",
+      "availability": "4 Hurry",
       "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
+        "raw": "4 Hurry",
+        "count": 4,
         "hurry": true
       },
       "cabins": [
@@ -207,8 +207,9 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$6,688",
           "price_num": 6688
@@ -221,10 +222,10 @@
       "returns": "Thu 29 Jan 2026",
       "price_from_aud": "$2,385",
       "price_from_num": 2385,
-      "availability": "4 Hurry",
+      "availability": "6 Hurry",
       "availability_parsed": {
-        "raw": "4 Hurry",
-        "count": 4,
+        "raw": "6 Hurry",
+        "count": 6,
         "hurry": true
       },
       "cabins": [
@@ -258,8 +259,9 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$3,404",
           "price_num": 3404
