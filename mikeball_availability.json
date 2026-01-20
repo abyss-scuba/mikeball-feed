@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-01-20T08:01:37.832522",
+  "scrapedAt": "2026-01-21T08:01:31.990746",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-01-27",
-  "window_end": "2026-11-16",
+  "window_start": "2026-01-28",
+  "window_end": "2026-11-17",
   "trips": [
     {
       "expedition": "5 night Coral Sea & Cod Hole",
@@ -530,8 +530,8 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
+            "raw": "1 Hurry",
+            "count": 1,
             "hurry": true
           },
           "price": "$3,430",
