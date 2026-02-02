@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-02-02T08:01:30.256904",
+  "scrapedAt": "2026-02-02T17:31:48.179222",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2026-02-09",
   "window_end": "2026-11-29",
@@ -1057,8 +1057,9 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$3,602",
           "price_num": 3602
@@ -1552,8 +1553,8 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$5,280",
           "price_num": 5280
