@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-02-04T17:31:52.542276",
+  "scrapedAt": "2026-02-05T08:01:37.410047",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-02-11",
-  "window_end": "2026-12-01",
+  "window_start": "2026-02-12",
+  "window_end": "2026-12-02",
   "trips": [
     {
       "expedition": "5 night Coral Sea & Cod Hole",
@@ -254,6 +254,58 @@
           },
           "price": "$7,606",
           "price_num": 7606
+        }
+      ]
+    },
+    {
+      "expedition": "7 Night - Coral Sea Safari",
+      "departs": "Thu 23 Apr 2026",
+      "returns": "Thu 30 Apr 2026",
+      "price_from_aud": "$4,802",
+      "price_from_num": 4802,
+      "availability": "1 Hurry",
+      "availability_parsed": {
+        "raw": "1 Hurry",
+        "count": 1,
+        "hurry": true
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$4,802",
+          "price_num": 4802
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$5,635",
+          "price_num": 5635
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
+          },
+          "price": "$6,450",
+          "price_num": 6450
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$7,022",
+          "price_num": 7022
         }
       ]
     },
@@ -1491,6 +1543,58 @@
       ]
     },
     {
+      "expedition": "4 Night - Fly Dive Coral Sea",
+      "departs": "Thu 01 Oct 2026",
+      "returns": "Mon 05 Oct 2026",
+      "price_from_aud": "$2,835",
+      "price_from_num": 2835,
+      "availability": "1 Hurry",
+      "availability_parsed": {
+        "raw": "1 Hurry",
+        "count": 1,
+        "hurry": true
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
+          },
+          "price": "$2,835",
+          "price_num": 2835
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$3,255",
+          "price_num": 3255
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$3,602",
+          "price_num": 3602
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$3,945",
+          "price_num": 3945
+        }
+      ]
+    },
+    {
       "expedition": "3 Night - Fly Dive Cod Hole",
       "departs": "Mon 05 Oct 2026",
       "returns": "Thu 08 Oct 2026",
@@ -1548,10 +1652,10 @@
       "returns": "Thu 29 Oct 2026",
       "price_from_aud": "$4,853",
       "price_from_num": 4853,
-      "availability": "1 Hurry",
+      "availability": "3 Hurry",
       "availability_parsed": {
-        "raw": "1 Hurry",
-        "count": 1,
+        "raw": "3 Hurry",
+        "count": 3,
         "hurry": true
       },
       "cabins": [
