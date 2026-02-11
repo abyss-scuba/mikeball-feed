@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-02-10T17:31:58.381943",
+  "scrapedAt": "2026-02-11T17:31:52.030750",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-02-17",
-  "window_end": "2026-12-07",
+  "window_start": "2026-02-18",
+  "window_end": "2026-12-08",
   "trips": [
     {
       "expedition": "5 night Coral Sea & Cod Hole",
@@ -293,8 +293,9 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$6,450",
           "price_num": 6450
@@ -397,8 +398,9 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$3,266",
           "price_num": 3266
@@ -622,10 +624,10 @@
       "returns": "Mon 20 Jul 2026",
       "price_from_aud": "$2,875",
       "price_from_num": 2875,
-      "availability": "3 Hurry",
+      "availability": "2 Hurry",
       "availability_parsed": {
-        "raw": "3 Hurry",
-        "count": 3,
+        "raw": "2 Hurry",
+        "count": 2,
         "hurry": true
       },
       "cabins": [
@@ -641,9 +643,8 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$3,301",
           "price_num": 3301
@@ -675,10 +676,10 @@
       "returns": "Thu 23 Jul 2026",
       "price_from_aud": "$4,916",
       "price_from_num": 4916,
-      "availability": "3 Hurry",
+      "availability": "2 Hurry",
       "availability_parsed": {
-        "raw": "3 Hurry",
-        "count": 3,
+        "raw": "2 Hurry",
+        "count": 2,
         "hurry": true
       },
       "cabins": [
@@ -694,9 +695,8 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$5,769",
           "price_num": 5769
@@ -728,10 +728,10 @@
       "returns": "Thu 23 Jul 2026",
       "price_from_aud": "$2,540",
       "price_from_num": 2540,
-      "availability": "3 Hurry",
+      "availability": "4 Hurry",
       "availability_parsed": {
-        "raw": "3 Hurry",
-        "count": 3,
+        "raw": "4 Hurry",
+        "count": 4,
         "hurry": true
       },
       "cabins": [
@@ -747,8 +747,8 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
+            "raw": "2 Hurry",
+            "count": 2,
             "hurry": true
           },
           "price": "$2,940",
@@ -1087,10 +1087,10 @@
       "returns": "Tue 01 Sep 2026",
       "price_from_aud": "$3,430",
       "price_from_num": 3430,
-      "availability": "6 Hurry",
+      "availability": "4 Hurry",
       "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
+        "raw": "4 Hurry",
+        "count": 4,
         "hurry": true
       },
       "cabins": [
