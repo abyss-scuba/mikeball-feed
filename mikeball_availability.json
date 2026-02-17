@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-02-17T08:01:37.260847",
+  "scrapedAt": "2026-02-17T17:31:52.909879",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2026-02-24",
   "window_end": "2026-12-14",
@@ -78,8 +78,9 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$5,770",
           "price_num": 5770
@@ -670,6 +671,58 @@
       ]
     },
     {
+      "expedition": "4 Night - Fly Dive Minke Whale",
+      "departs": "Thu 18 Jun 2026",
+      "returns": "Mon 22 Jun 2026",
+      "price_from_aud": "$2,875",
+      "price_from_num": 2875,
+      "availability": "2 Hurry",
+      "availability_parsed": {
+        "raw": "2 Hurry",
+        "count": 2,
+        "hurry": true
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$2,875",
+          "price_num": 2875
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
+          },
+          "price": "$3,301",
+          "price_num": 3301
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$3,653",
+          "price_num": 3653
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$4,001",
+          "price_num": 4001
+        }
+      ]
+    },
+    {
       "expedition": "3 Night - Fly Dive Minke Whale",
       "departs": "Mon 20 Jul 2026",
       "returns": "Thu 23 Jul 2026",
@@ -728,17 +781,18 @@
       "returns": "Thu 30 Jul 2026",
       "price_from_aud": "$4,802",
       "price_from_num": 4802,
-      "availability": "10+ -",
+      "availability": "9 -",
       "availability_parsed": {
-        "raw": "10+ -",
-        "count": 10
+        "raw": "9 -",
+        "count": 9
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$4,802",
           "price_num": 4802
@@ -1892,9 +1946,8 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$7,007",
           "price_num": 7007
@@ -1902,8 +1955,9 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$7,606",
           "price_num": 7606
