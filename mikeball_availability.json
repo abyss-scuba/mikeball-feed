@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-02-24T08:01:37.737668",
+  "scrapedAt": "2026-02-24T17:31:53.753820",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2026-03-03",
   "window_end": "2026-12-21",
@@ -111,18 +111,17 @@
       "returns": "Tue 31 Mar 2026",
       "price_from_aud": "$3,267",
       "price_from_num": 3267,
-      "availability": "9 -",
+      "availability": "10+ -",
       "availability_parsed": {
-        "raw": "9 -",
-        "count": 9
+        "raw": "10+ -",
+        "count": 10
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "2+",
+            "count": 2
           },
           "price": "$3,267",
           "price_num": 3267
@@ -678,18 +677,17 @@
       "returns": "Thu 30 Jul 2026",
       "price_from_aud": "$4,802",
       "price_from_num": 4802,
-      "availability": "9 -",
+      "availability": "8 -",
       "availability_parsed": {
-        "raw": "9 -",
-        "count": 9
+        "raw": "8 -",
+        "count": 8
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$4,802",
           "price_num": 4802
@@ -1345,10 +1343,10 @@
       "returns": "Thu 08 Oct 2026",
       "price_from_aud": "$2,504",
       "price_from_num": 2504,
-      "availability": "6 Hurry",
+      "availability": "5 Hurry",
       "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
+        "raw": "5 Hurry",
+        "count": 5,
         "hurry": true
       },
       "cabins": [
@@ -1375,8 +1373,9 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$3,266",
           "price_num": 3266
