@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-02-25T08:01:38.630348",
+  "scrapedAt": "2026-02-25T17:31:53.270611",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "window_start": "2026-03-04",
   "window_end": "2026-12-22",
@@ -240,8 +240,8 @@
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
+            "raw": "2 Hurry",
+            "count": 2,
             "hurry": true
           },
           "price": "$7,007",
@@ -1034,18 +1034,19 @@
       "returns": "Mon 07 Sep 2026",
       "price_from_aud": "$2,835",
       "price_from_num": 2835,
-      "availability": "5 Hurry",
+      "availability": "6 Hurry",
       "availability_parsed": {
-        "raw": "5 Hurry",
-        "count": 5,
+        "raw": "6 Hurry",
+        "count": 6,
         "hurry": true
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$2,835",
           "price_num": 2835
@@ -1081,23 +1082,76 @@
       ]
     },
     {
-      "expedition": "3 Night - Fly Dive Cod Hole",
-      "departs": "Mon 07 Sep 2026",
+      "expedition": "7 Night - Coral Sea Safari",
+      "departs": "Thu 03 Sep 2026",
       "returns": "Thu 10 Sep 2026",
-      "price_from_aud": "$2,504",
-      "price_from_num": 2504,
-      "availability": "4 Hurry",
+      "price_from_aud": "$4,802",
+      "price_from_num": 4802,
+      "availability": "1 Hurry",
       "availability_parsed": {
-        "raw": "4 Hurry",
-        "count": 4,
+        "raw": "1 Hurry",
+        "count": 1,
         "hurry": true
       },
       "cabins": [
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
+          },
+          "price": "$4,802",
+          "price_num": 4802
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
             "raw": "SOLD OUT",
             "status": "SOLD OUT"
+          },
+          "price": "$5,635",
+          "price_num": 5635
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$6,450",
+          "price_num": 6450
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$7,022",
+          "price_num": 7022
+        }
+      ]
+    },
+    {
+      "expedition": "3 Night - Fly Dive Cod Hole",
+      "departs": "Mon 07 Sep 2026",
+      "returns": "Thu 10 Sep 2026",
+      "price_from_aud": "$2,504",
+      "price_from_num": 2504,
+      "availability": "5 Hurry",
+      "availability_parsed": {
+        "raw": "5 Hurry",
+        "count": 5,
+        "hurry": true
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
           },
           "price": "$2,504",
           "price_num": 2504
@@ -1343,10 +1397,10 @@
       "returns": "Thu 08 Oct 2026",
       "price_from_aud": "$2,504",
       "price_from_num": 2504,
-      "availability": "5 Hurry",
+      "availability": "3 Hurry",
       "availability_parsed": {
-        "raw": "5 Hurry",
-        "count": 5,
+        "raw": "3 Hurry",
+        "count": 3,
         "hurry": true
       },
       "cabins": [
@@ -1363,9 +1417,8 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$2,899",
           "price_num": 2899
@@ -1717,9 +1770,8 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$4,802",
           "price_num": 4802
@@ -1768,8 +1820,8 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
+            "raw": "1 Hurry",
+            "count": 1,
             "hurry": true
           },
           "price": "$2,835",
@@ -1819,9 +1871,8 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$2,504",
           "price_num": 2504
