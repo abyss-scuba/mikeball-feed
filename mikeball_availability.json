@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-02-27T17:32:39.877242",
+  "scrapedAt": "2026-02-28T17:32:42.834108",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-03-06",
-  "window_end": "2026-12-24",
+  "window_start": "2026-03-07",
+  "window_end": "2026-12-25",
   "trips": [
     {
       "expedition": "7 Night - Yongala Coral Sea TSV - CNS",
@@ -264,10 +264,10 @@
       "returns": "Thu 30 Apr 2026",
       "price_from_aud": "$4,802",
       "price_from_num": 4802,
-      "availability": "3 Hurry",
+      "availability": "1 Hurry",
       "availability_parsed": {
-        "raw": "3 Hurry",
-        "count": 3,
+        "raw": "1 Hurry",
+        "count": 1,
         "hurry": true
       },
       "cabins": [
@@ -316,10 +316,10 @@
       "returns": "Thu 30 Apr 2026",
       "price_from_aud": "$2,504",
       "price_from_num": 2504,
-      "availability": "4 Hurry",
+      "availability": "2 Hurry",
       "availability_parsed": {
-        "raw": "4 Hurry",
-        "count": 4,
+        "raw": "2 Hurry",
+        "count": 2,
         "hurry": true
       },
       "cabins": [
@@ -2693,10 +2693,10 @@
       "returns": "Thu 08 Oct 2026",
       "price_from_aud": "$2,504",
       "price_from_num": 2504,
-      "availability": "3 Hurry",
+      "availability": "1 Hurry",
       "availability_parsed": {
-        "raw": "3 Hurry",
-        "count": 3,
+        "raw": "1 Hurry",
+        "count": 1,
         "hurry": true
       },
       "cabins": [
