@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-03-06T17:31:49.194048",
+  "scrapedAt": "2026-03-07T17:31:55.381290",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-03-13",
-  "window_end": "2026-12-31",
+  "window_start": "2026-03-14",
+  "window_end": "2027-01-01",
   "trips": [
     {
       "expedition": "5 night Coral Sea & Cod Hole",
@@ -1344,10 +1344,10 @@
       "returns": "Tue 10 Nov 2026",
       "price_from_aud": "$3,430",
       "price_from_num": 3430,
-      "availability": "10+ -",
+      "availability": "8 -",
       "availability_parsed": {
-        "raw": "10+ -",
-        "count": 10
+        "raw": "8 -",
+        "count": 8
       },
       "cabins": [
         {
@@ -1363,8 +1363,9 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$4,025",
           "price_num": 4025
@@ -1382,8 +1383,9 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$5,017",
           "price_num": 5017
