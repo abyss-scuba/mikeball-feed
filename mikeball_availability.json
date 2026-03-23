@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-03-23T17:46:36.291704",
+  "scrapedAt": "2026-03-24T08:01:48.966291",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-03-30",
-  "window_end": "2027-01-17",
+  "window_start": "2026-03-31",
+  "window_end": "2027-01-18",
   "trips": [
     {
       "expedition": "7 Night -Special Ashmore Exploratory",
@@ -1795,6 +1795,56 @@
       ]
     },
     {
+      "expedition": "4 Night - Fly Dive Coral Sea",
+      "departs": "Thu 14 Jan 2027",
+      "returns": "Mon 18 Jan 2027",
+      "price_from_aud": "$2,835",
+      "price_from_num": 2835,
+      "availability": "10+ -",
+      "availability_parsed": {
+        "raw": "10+ -",
+        "count": 10
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$2,835",
+          "price_num": 2835
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$3,255",
+          "price_num": 3255
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$3,602",
+          "price_num": 3602
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$3,945",
+          "price_num": 3945
+        }
+      ]
+    },
+    {
       "expedition": "7 Night - Coral Sea Safari",
       "departs": "Thu 14 Jan 2027",
       "returns": "Thu 21 Jan 2027",
@@ -1845,11 +1895,11 @@
       ]
     },
     {
-      "expedition": "4 Night - Fly Dive Coral Sea",
-      "departs": "Thu 14 Jan 2027",
-      "returns": "Mon 18 Jan 2027",
-      "price_from_aud": "$2,835",
-      "price_from_num": 2835,
+      "expedition": "3 Night - Fly Dive Cod Hole",
+      "departs": "Mon 18 Jan 2027",
+      "returns": "Thu 21 Jan 2027",
+      "price_from_aud": "$2,504",
+      "price_from_num": 2504,
       "availability": "10+ -",
       "availability_parsed": {
         "raw": "10+ -",
@@ -1862,8 +1912,8 @@
             "raw": "2+",
             "count": 2
           },
-          "price": "$2,835",
-          "price_num": 2835
+          "price": "$2,504",
+          "price_num": 2504
         },
         {
           "cabin_type": "Club - per person, share cabin",
@@ -1871,17 +1921,17 @@
             "raw": "2+",
             "count": 2
           },
-          "price": "$3,255",
-          "price_num": 3255
+          "price": "$2,899",
+          "price_num": 2899
         },
         {
           "cabin_type": "Standard - per person, share cabin",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
-          "price": "$3,602",
-          "price_num": 3602
+          "price": "$3,266",
+          "price_num": 3266
         },
         {
           "cabin_type": "Premium - double or queen bed, per person*",
@@ -1889,8 +1939,8 @@
             "raw": "2+",
             "count": 2
           },
-          "price": "$3,945",
-          "price_num": 3945
+          "price": "$3,574",
+          "price_num": 3574
         }
       ]
     }
