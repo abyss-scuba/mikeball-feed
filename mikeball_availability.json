@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-04-04T17:31:55.876064",
+  "scrapedAt": "2026-04-06T08:01:43.811899",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-04-11",
-  "window_end": "2027-01-29",
+  "window_start": "2026-04-13",
+  "window_end": "2027-01-31",
   "trips": [
     {
       "expedition": "4 Night - Fly Dive Coral Sea",
@@ -358,6 +358,58 @@
           },
           "price": "$7,022",
           "price_num": 7022
+        }
+      ]
+    },
+    {
+      "expedition": "3 Night - Fly Dive Minke Whale",
+      "departs": "Mon 29 Jun 2026",
+      "returns": "Thu 02 Jul 2026",
+      "price_from_aud": "$2,540",
+      "price_from_num": 2540,
+      "availability": "1 Hurry",
+      "availability_parsed": {
+        "raw": "1 Hurry",
+        "count": 1,
+        "hurry": true
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "1 Hurry",
+            "count": 1,
+            "hurry": true
+          },
+          "price": "$2,540",
+          "price_num": 2540
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$2,940",
+          "price_num": 2940
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$3,313",
+          "price_num": 3313
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$3,624",
+          "price_num": 3624
         }
       ]
     },
