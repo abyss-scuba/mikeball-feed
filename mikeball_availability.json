@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-05-05T17:31:39.522986",
+  "scrapedAt": "2026-05-06T17:32:04.842346",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-05-12",
-  "window_end": "2027-03-01",
+  "window_start": "2026-05-13",
+  "window_end": "2027-03-02",
   "trips": [
     {
       "expedition": "5 night GBR Ribbon Reefs",
@@ -578,10 +578,10 @@
       "returns": "Thu 24 Sep 2026",
       "price_from_aud": "$2,504",
       "price_from_num": 2504,
-      "availability": "8 -",
+      "availability": "9 -",
       "availability_parsed": {
-        "raw": "8 -",
-        "count": 8
+        "raw": "9 -",
+        "count": 9
       },
       "cabins": [
         {
@@ -629,10 +629,10 @@
       "returns": "Thu 08 Oct 2026",
       "price_from_aud": "$2,504",
       "price_from_num": 2504,
-      "availability": "1 Hurry",
+      "availability": "2 Hurry",
       "availability_parsed": {
-        "raw": "1 Hurry",
-        "count": 1,
+        "raw": "2 Hurry",
+        "count": 2,
         "hurry": true
       },
       "cabins": [
@@ -648,8 +648,8 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
+            "raw": "2 Hurry",
+            "count": 2,
             "hurry": true
           },
           "price": "$2,899",
