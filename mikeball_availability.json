@@ -1,61 +1,9 @@
 {
-  "scrapedAt": "2026-05-07T17:31:45.706445",
+  "scrapedAt": "2026-05-08T08:01:33.851408",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-05-14",
-  "window_end": "2027-03-03",
+  "window_start": "2026-05-15",
+  "window_end": "2027-03-04",
   "trips": [
-    {
-      "expedition": "5 night GBR Ribbon Reefs",
-      "departs": "Thu 14 May 2026",
-      "returns": "Tue 19 May 2026",
-      "price_from_aud": "$3,430",
-      "price_from_num": 3430,
-      "availability": "6 Hurry",
-      "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$3,430",
-          "price_num": 3430
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "2+",
-            "count": 2
-          },
-          "price": "$4,025",
-          "price_num": 4025
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$4,607",
-          "price_num": 4607
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
-          },
-          "price": "$5,017",
-          "price_num": 5017
-        }
-      ]
-    },
     {
       "expedition": "5 night GBR Ribbon Reefs",
       "departs": "Thu 21 May 2026",
@@ -492,8 +440,8 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
+            "raw": "1 Hurry",
+            "count": 1,
             "hurry": true
           },
           "price": "$3,255",
