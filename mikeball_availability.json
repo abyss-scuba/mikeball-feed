@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-05-10T17:31:45.239463",
+  "scrapedAt": "2026-05-12T08:01:27.272149",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-05-17",
-  "window_end": "2027-03-06",
+  "window_start": "2026-05-19",
+  "window_end": "2027-03-08",
   "trips": [
     {
       "expedition": "5 night GBR Ribbon Reefs",
@@ -474,10 +474,10 @@
       "returns": "Thu 10 Sep 2026",
       "price_from_aud": "$2,504",
       "price_from_num": 2504,
-      "availability": "6 Hurry",
+      "availability": "4 Hurry",
       "availability_parsed": {
-        "raw": "6 Hurry",
-        "count": 6,
+        "raw": "4 Hurry",
+        "count": 4,
         "hurry": true
       },
       "cabins": [
@@ -513,8 +513,9 @@
         {
           "cabin_type": "Premium - double or queen bed, per person*",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$3,574",
           "price_num": 3574
@@ -722,58 +723,6 @@
           "berths_left": {
             "raw": "2+",
             "count": 2
-          },
-          "price": "$3,574",
-          "price_num": 3574
-        }
-      ]
-    },
-    {
-      "expedition": "3 Night - Fly Dive Cod Hole",
-      "departs": "Mon 05 Oct 2026",
-      "returns": "Thu 08 Oct 2026",
-      "price_from_aud": "$2,504",
-      "price_from_num": 2504,
-      "availability": "2 Hurry",
-      "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
-        "hurry": true
-      },
-      "cabins": [
-        {
-          "cabin_type": "Budget - per person, share cabin - shared bathroom",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$2,504",
-          "price_num": 2504
-        },
-        {
-          "cabin_type": "Club - per person, share cabin",
-          "berths_left": {
-            "raw": "2 Hurry",
-            "count": 2,
-            "hurry": true
-          },
-          "price": "$2,899",
-          "price_num": 2899
-        },
-        {
-          "cabin_type": "Standard - per person, share cabin",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
-          },
-          "price": "$3,266",
-          "price_num": 3266
-        },
-        {
-          "cabin_type": "Premium - double or queen bed, per person*",
-          "berths_left": {
-            "raw": "SOLD OUT",
-            "status": "SOLD OUT"
           },
           "price": "$3,574",
           "price_num": 3574
@@ -1356,8 +1305,9 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$2,835",
           "price_num": 2835
@@ -1406,8 +1356,9 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$4,802",
           "price_num": 4802
@@ -1456,8 +1407,9 @@
         {
           "cabin_type": "Budget - per person, share cabin - shared bathroom",
           "berths_left": {
-            "raw": "2+",
-            "count": 2
+            "raw": "2 Hurry",
+            "count": 2,
+            "hurry": true
           },
           "price": "$2,504",
           "price_num": 2504
