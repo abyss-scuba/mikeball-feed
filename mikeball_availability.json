@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-05-24T17:32:15.250862",
+  "scrapedAt": "2026-05-25T17:31:45.108131",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-05-31",
-  "window_end": "2027-03-20",
+  "window_start": "2026-06-01",
+  "window_end": "2027-03-21",
   "trips": [
     {
       "expedition": "3 Night - Fly Dive Minke Whale",
@@ -578,10 +578,10 @@
       "returns": "Thu 08 Oct 2026",
       "price_from_aud": "$2,504",
       "price_from_num": 2504,
-      "availability": "2 Hurry",
+      "availability": "1 Hurry",
       "availability_parsed": {
-        "raw": "2 Hurry",
-        "count": 2,
+        "raw": "1 Hurry",
+        "count": 1,
         "hurry": true
       },
       "cabins": [
@@ -598,9 +598,8 @@
         {
           "cabin_type": "Club - per person, share cabin",
           "berths_left": {
-            "raw": "1 Hurry",
-            "count": 1,
-            "hurry": true
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
           },
           "price": "$2,899",
           "price_num": 2899
