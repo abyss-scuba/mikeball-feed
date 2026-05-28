@@ -1,8 +1,8 @@
 {
-  "scrapedAt": "2026-05-28T17:31:14.975037",
+  "scrapedAt": "2026-05-29T08:01:16.422870",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-  "window_start": "2026-06-04",
-  "window_end": "2027-03-24",
+  "window_start": "2026-06-05",
+  "window_end": "2027-03-25",
   "trips": [
     {
       "expedition": "7 Night Coral Sea Exploratory",
@@ -1385,6 +1385,56 @@
           },
           "price": "$10,731",
           "price_num": 10731
+        }
+      ]
+    },
+    {
+      "expedition": "5 night Coral Sea & Cod Hole",
+      "departs": "Thu 25 Mar 2027",
+      "returns": "Tue 30 Mar 2027",
+      "price_from_aud": "$3,430",
+      "price_from_num": 3430,
+      "availability": "10+ -",
+      "availability_parsed": {
+        "raw": "10+ -",
+        "count": 10
+      },
+      "cabins": [
+        {
+          "cabin_type": "Budget - per person, share cabin - shared bathroom",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$3,430",
+          "price_num": 3430
+        },
+        {
+          "cabin_type": "Club - per person, share cabin",
+          "berths_left": {
+            "raw": "SOLD OUT",
+            "status": "SOLD OUT"
+          },
+          "price": "$4,025",
+          "price_num": 4025
+        },
+        {
+          "cabin_type": "Standard - per person, share cabin",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$4,607",
+          "price_num": 4607
+        },
+        {
+          "cabin_type": "Premium - double or queen bed, per person*",
+          "berths_left": {
+            "raw": "2+",
+            "count": 2
+          },
+          "price": "$5,017",
+          "price_num": 5017
         }
       ]
     }
