@@ -1,69 +1,69 @@
 {
-  "events": [
-    {
-      "id": "beyond-the-bleach-20260610",
-      "match": [
-        "Beyond the Bleach 10-06-2026",
-        "Beyond the Bleach 20260610",
-        "AS107"
-      ],
-      "title": "Beyond the Bleach",
-      "imageFamily": "conservation",
-      "location": "Australian National Maritime Museum",
-      "badges": [
-        "Vivid Sydney",
-        "Non-diver friendly"
-      ],
-      "longDescription": "Join Abyss divers at the Australian National Maritime Museum for Beyond the Bleach, part of Vivid Sydney's Minds program. This panel explores the future of the Great Barrier Reef, ocean conservation and how divers can stay hopeful and engaged in protecting the underwater world.",
-      "tags": [
-        "Ocean conservation",
-        "Vivid Sydney",
-        "Bring a friend"
-      ]
-    },
-    {
-      "id": "travel-night-20260626",
-      "match": [
-        "Travel Night 26-06-2026",
-        "Travel Night 20260626",
-        "AS109"
-      ],
-      "title": "Travel Night + Pizza",
-      "imageFamily": "travel",
-      "location": "Abyss Scuba Diving, Ramsgate",
-      "badges": [
-        "Trip planning"
-      ],
-      "longDescription": "Join Jerry Witkowski, Manager of Dive Adventures, for a relaxed evening about upcoming overseas dive trips. Bring your questions about dive holidays, travel planning and future adventures. Come for pizza, hear what trips are coming up and meet divers who may become your next travel buddies.",
-      "tags": [
-        "Adventure inspiration",
-        "Find travel buddies",
-        "Pizza night"
-      ]
-    },
-    {
-      "id": "padi-womens-dive-day-seals-20260718",
-      "match": [
-        "Women's Dive Day -18/7/2026",
-        "Women's Dive Day 18-07-2026",
-        "Women's Dive Day 20260718",
-        "PADI Women's Dive Day - Seals",
-        "AS110"
-      ],
-      "title": "PADI Women's Dive Day - Seals",
-      "imageFamily": "women",
-      "location": "Martin Island",
-      "badges": [
-        "Women's Dive Day"
-      ],
-      "longDescription": "Celebrate PADI Women's Dive Day with a special seal dive at Martin Island. Join other divers for a memorable marine adventure, share experiences and build supportive connections in the Abyss diving community.",
-      "tags": [
-        "Women divers",
-        "Supportive community",
-        "Seal adventure"
-      ]
-    },
-    {
+"events": [
+{
+"id": "beyond-the-bleach-20260610",
+"match": [
+"Beyond the Bleach 10-06-2026",
+"Beyond the Bleach 20260610",
+"AS107"
+],
+"title": "Beyond the Bleach",
+"imageFamily": "conservation",
+"location": "Australian National Maritime Museum",
+"badges": [
+"Vivid Sydney",
+"Non-diver friendly"
+],
+"longDescription": "Join Abyss divers at the Australian National Maritime Museum for Beyond the Bleach, part of Vivid Sydney's Minds program. This panel explores the future of the Great Barrier Reef, ocean conservation and how divers can stay hopeful and engaged in protecting the underwater world.",
+"tags": [
+"Ocean conservation",
+"Vivid Sydney",
+"Bring a friend"
+]
+},
+{
+"id": "travel-night-20260626",
+"match": [
+"Travel Night 26-06-2026",
+"Travel Night 20260626",
+"AS109"
+],
+"title": "Travel Night + Pizza",
+"imageFamily": "travel",
+"location": "Abyss Scuba Diving, Ramsgate",
+"badges": [
+"Trip planning"
+],
+"longDescription": "Join Jerry Witkowski, Manager of Dive Adventures, for a relaxed evening about upcoming overseas dive trips. Bring your questions about dive holidays, travel planning and future adventures. Come for pizza, hear what trips are coming up and meet divers who may become your next travel buddies.",
+"tags": [
+"Adventure inspiration",
+"Find travel buddies",
+"Pizza night"
+]
+},
+{
+"id": "padi-womens-dive-day-seals-20260718",
+"match": [
+"Women's Dive Day -18/7/2026",
+"Women's Dive Day 18-07-2026",
+"Women's Dive Day 20260718",
+"PADI Women's Dive Day - Seals",
+"AS110"
+],
+"title": "PADI Women's Dive Day - Seals",
+"imageFamily": "women",
+"location": "Martin Island",
+"badges": [
+"Women's Dive Day"
+],
+"longDescription": "Celebrate PADI Women's Dive Day with a special seal dive at Martin Island. Join other divers for a memorable marine adventure, share experiences and build supportive connections in the Abyss diving community.",
+"tags": [
+"Women divers",
+"Supportive community",
+"Seal adventure"
+]
+},
+{
 "id": "sharks-pizza-beer-peter-simpson-20260719",
 "match": [
 "Pizza & Beer",
@@ -100,56 +100,55 @@
 "Pizza and beer",
 "Ask questions"
 ]
+},
+{
+"id": "climbing-social-20260731",
+"match": [
+"Climbing Social",
+"Climbing Social 31-07-2026",
+"Climbing Social 20260731",
+"AS118",
+"Boulding social at Bloc Haus Marrickville",
+"Bouldering social at Bloc Haus Marrickville",
+"Bloc Haus Marrickville"
+],
+"title": "Climbing Social",
+"imageFamily": "fun",
+"location": "Bloc Haus Marrickville",
+"badges": [
+"Bouldering social",
+"Beginner-friendly",
+"Shoes available to hire"
+],
+"longDescription": "Join Abyss divers for a chilled and funny evening of bouldering at Bloc Haus Marrickville. Whether you are an experienced climber or just fancy giving it a go, this is a relaxed way to catch up with the community away from the water. Entry is paid directly at the venue: $25, with climbing shoe hire available for $7 if needed.",
+"tags": [
+"Chilled evening",
+"Come alone",
+"No dive gear",
+"Shoes available"
+]
+},
+{
+"id": "cleanup-dive-20260808",
+"match": [
+"Cleanup Dive 08-08-2026",
+"Cleanup Dive 20260808",
+"Sutherland Point Cleanup Dive",
+"AS111"
+],
+"title": "Cleanup Dive",
+"imageFamily": "conservation",
+"location": "Sutherland Point",
+"badges": [
+"Dive with purpose",
+"Non-diver friendly"
+],
+"longDescription": "Dive with purpose at Sutherland Point. Join the Keep Australia Beautiful cleanup dive to help protect Sydney's marine environment, connect with eco-minded divers and finish the day knowing you made a real difference. Non-divers can still come along and support the cleanup community.",
+"tags": [
+"Ocean community",
+"Conservation",
+"Bring a friend"
+]
 }
-
-    {
-      "id": "climbing-social-20260731",
-      "match": [
-        "Climbing Social",
-        "Climbing Social 31-07-2026",
-        "Climbing Social 20260731",
-        "AS118",
-        "Boulding social at Bloc Haus Marrickville",
-        "Bouldering social at Bloc Haus Marrickville",
-        "Bloc Haus Marrickville"
-      ],
-      "title": "Climbing Social",
-      "imageFamily": "fun",
-      "location": "Bloc Haus Marrickville",
-      "badges": [
-        "Bouldering social",
-        "Beginner-friendly",
-        "Shoes available to hire"
-      ],
-      "longDescription": "Join Abyss divers for a chilled and funny evening of bouldering at Bloc Haus Marrickville. Whether you are an experienced climber or just fancy giving it a go, this is a relaxed way to catch up with the community away from the water. Entry is paid directly at the venue: $25, with climbing shoe hire available for $7 if needed.",
-      "tags": [
-        "Chilled evening",
-        "Come alone",
-        "No dive gear",
-        "Shoes available"
-      ]
-    },
-    {
-      "id": "cleanup-dive-20260808",
-      "match": [
-        "Cleanup Dive 08-08-2026",
-        "Cleanup Dive 20260808",
-        "Sutherland Point Cleanup Dive",
-        "AS111"
-      ],
-      "title": "Cleanup Dive",
-      "imageFamily": "conservation",
-      "location": "Sutherland Point",
-      "badges": [
-        "Dive with purpose",
-        "Non-diver friendly"
-      ],
-      "longDescription": "Dive with purpose at Sutherland Point. Join the Keep Australia Beautiful cleanup dive to help protect Sydney's marine environment, connect with eco-minded divers and finish the day knowing you made a real difference. Non-divers can still come along and support the cleanup community.",
-      "tags": [
-        "Ocean community",
-        "Conservation",
-        "Bring a friend"
-      ]
-    }
-  ]
+]
 }
