@@ -114,6 +114,7 @@
 ],
 "title": "Climbing Social",
 "imageFamily": "fun",
+"image": "https://imagedelivery.net/JNWw-OXM1FMvRqzeXvDicQ/3ec0b522-a4c3-4a21-8b42-3fa7238e3800/public",
 "location": "Bloc Haus Marrickville",
 "badges": [
 "Bouldering social",
@@ -126,28 +127,6 @@
 "Come alone",
 "No dive gear",
 "Shoes available"
-]
-},
-{
-"id": "cleanup-dive-20260808",
-"match": [
-"Cleanup Dive 08-08-2026",
-"Cleanup Dive 20260808",
-"Sutherland Point Cleanup Dive",
-"AS111"
-],
-"title": "Cleanup Dive",
-"imageFamily": "conservation",
-"location": "Sutherland Point",
-"badges": [
-"Dive with purpose",
-"Non-diver friendly"
-],
-"longDescription": "Dive with purpose at Sutherland Point. Join the Keep Australia Beautiful cleanup dive to help protect Sydney's marine environment, connect with eco-minded divers and finish the day knowing you made a real difference. Non-divers can still come along and support the cleanup community.",
-"tags": [
-"Ocean community",
-"Conservation",
-"Bring a friend"
 ]
 }
 ]
