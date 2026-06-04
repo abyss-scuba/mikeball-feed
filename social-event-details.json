@@ -64,42 +64,44 @@
       ]
     },
     {
-      "id": "sharks-pizza-beer-peter-simpson-20260719",
-      "match": [
-        "Pizza & Beer",
-        "Pizza and Beer",
-        "Pizza & Beer 19-07-2026",
-        "Pizza and Beer 19-07-2026",
-        "Pizza & Beer 20260719",
-        "Pizza and Beer 20260719",
-        "Sun 19 July 2:30 PM Pizza & Beer",
-        "Sun 19 Jul 2:30 PM Pizza & Beer",
-        "Sunday 19 July Pizza & Beer",
-        "Sharks, Pizza & Beer with Peter Simpson",
-        "Sharks, Pizza & Beer with Peter Simpson!",
-        "Sharks Pizza Beer with Peter Simpson",
-        "Sharks Pizza Beer with Peter Simpson 19-07-2026",
-        "Sharks Pizza Beer with Peter Simpson 20260719",
-        "Peter Simpson 19-07-2026",
-        "Peter Simpson 20260719",
-        "Sharks Pizza Beer 20260719"
-      ],
-      "title": "Sharks, Pizza & Beer with Peter Simpson",
-      "imageFamily": "wildlife",
-      "location": "Abyss Scuba Diving, Ramsgate",
-      "badges": [
-        "Special guest speaker",
-        "Pizza and beer",
-        "Shark talk"
-      ],
-      "longDescription": "Join Abyss for a relaxed afternoon of pizza, beer and shark stories with Peter Simpson, a founding member of Spot A Shark and an Abyss diver since 2004. Hear Peter's insights on Grey Nurse Sharks, shark conservation and years of Sydney shark-diving adventures, with plenty of time to ask questions.",
-      "tags": [
-        "Shark stories",
-        "Grey Nurse Sharks",
-        "Pizza and beer",
-        "Ask questions"
-      ]
-    },
+"id": "sharks-pizza-beer-peter-simpson-20260719",
+"match": [
+"Pizza & Beer",
+"Pizza and Beer",
+"Pizza & Beer 19-07-2026",
+"Pizza and Beer 19-07-2026",
+"Pizza & Beer 20260719",
+"Pizza and Beer 20260719",
+"Sun 19 July 2:30 PM Pizza & Beer",
+"Sun 19 Jul 2:30 PM Pizza & Beer",
+"Sunday 19 July Pizza & Beer",
+"Sharks, Pizza & Beer with Peter Simpson",
+"Sharks, Pizza & Beer with Peter Simpson!",
+"Sharks Pizza Beer with Peter Simpson",
+"Sharks Pizza Beer with Peter Simpson 19-07-2026",
+"Sharks Pizza Beer with Peter Simpson 20260719",
+"Peter Simpson 19-07-2026",
+"Peter Simpson 20260719",
+"Sharks Pizza Beer 20260719"
+],
+"title": "Sharks, Pizza & Beer with Peter Simpson",
+"imageFamily": "wildlife",
+"image": "https://imagedelivery.net/JNWw-OXM1FMvRqzeXvDicQ/4ac43277-cbf0-4640-df4c-130420b02300/public",
+"location": "Abyss Scuba Diving, Ramsgate",
+"badges": [
+"Special guest speaker",
+"Pizza and beer",
+"Shark talk"
+],
+"longDescription": "Join Abyss for a relaxed afternoon of pizza, beer and shark stories with Peter Simpson, a founding member of Spot A Shark and an Abyss diver since 2004. Hear Peter's insights on Grey Nurse Sharks, shark conservation and years of Sydney shark-diving adventures, with plenty of time to ask questions.",
+"tags": [
+"Shark stories",
+"Grey Nurse Sharks",
+"Pizza and beer",
+"Ask questions"
+]
+}
+
     {
       "id": "climbing-social-20260731",
       "match": [
