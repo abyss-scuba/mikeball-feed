@@ -128,6 +128,32 @@
 "No dive gear",
 "Shoes available"
 ]
+},
+{
+"id": "cleanup-dive-20260808",
+"match": [
+"Cleanup Dive",
+"Cleanup Dive 08-08-2026",
+"Cleanup Dive 20260808",
+"Sat 8 Aug 9:00 AM Cleanup Dive",
+"Saturday 8 August Cleanup Dive",
+"Keep Australia Beautiful Cleanup Dive - Sutherland Point",
+"Sutherland Point Cleanup Dive",
+"AS111"
+],
+"title": "Cleanup Dive",
+"imageFamily": "conservation",
+"location": "Sutherland Point",
+"badges": [
+"Dive with purpose",
+"Non-diver friendly"
+],
+"longDescription": "Dive with purpose at Sutherland Point. Join the Keep Australia Beautiful cleanup dive to help protect Sydney's marine environment, connect with eco-minded divers and finish the day knowing you made a real difference. Non-divers can still come along and support the cleanup community.",
+"tags": [
+"Ocean community",
+"Conservation",
+"Bring a friend"
+]
 }
 ]
 }
