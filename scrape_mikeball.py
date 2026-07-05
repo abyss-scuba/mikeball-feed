@@ -110,47 +110,76 @@ def perform_search(page, start_d: date, end_d: date):
     wait for results, expand all 'See more' so cabin tables render.
     """
     page.goto(SOURCE_URL, wait_until="domcontentloaded")
-    page.wait_for_timeout(1200)
+    page.wait_for_timeout(2500)
 
-    # Fill Start/End date inputs
     start_txt = fmt_picker(start_d)
-    end_txt   = fmt_picker(end_d)
+    end_txt = fmt_picker(end_d)
 
-    # Type into the visible inputs (letting the site JS handle formatting)
-    page.fill("#starts_at", "")
-    page.type("#starts_at", start_txt, delay=5)
-    page.fill("#ends_at", "")
-    page.type("#ends_at", end_txt, delay=5)
+    # Set fields directly and trigger the events the Resco form expects.
+    page.evaluate(
+        """({startTxt, endTxt}) => {
+            function setDate(selector, value) {
+                const el = document.querySelector(selector);
+                if (!el) throw new Error(selector + " not found");
+                el.value = value;
+                el.setAttribute("value", value);
+                ["input", "change", "blur"].forEach(name => {
+                    el.dispatchEvent(new Event(name, { bubbles: true }));
+                });
+                if (window.jQuery) {
+                    window.jQuery(el).val(value).trigger("input").trigger("change").trigger("blur");
+                }
+            }
 
-    # Expedition = ALL
-    try:
-        page.select_option("select[name='name']", value="all")
-    except Exception:
-        # If the select isn't found, ignore (defaults to all)
-        pass
+            setDate("#starts_at", startTxt);
+            setDate("#ends_at", endTxt);
 
-    # Uncheck "Hide unavailable" (if checked)
-    try:
-        hide_box = page.locator("input[name='hide_unavailable']")
-        if hide_box.is_checked():
-            hide_box.uncheck()
-    except Exception:
-        pass
+            const select = document.querySelector("select[name='name']");
+            if (select) {
+                select.value = "all";
+                select.dispatchEvent(new Event("change", { bubbles: true }));
+                if (window.jQuery) {
+                    window.jQuery(select).val("all").trigger("change");
+                }
+            }
 
-    # Click SEARCH (Resco plugin uses .ra-ajax)
+            const hide = document.querySelector("input[name='hide_unavailable']");
+            if (hide) {
+                hide.checked = false;
+                hide.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+        }""",
+        {"startTxt": start_txt, "endTxt": end_txt}
+    )
+
+    page.wait_for_timeout(500)
+
+    # Fail early if the date fields did not stick.
+    values = page.evaluate(
+        """() => ({
+            start: document.querySelector("#starts_at")?.value || "",
+            end: document.querySelector("#ends_at")?.value || ""
+        })"""
+    )
+
+    if values["start"] != start_txt or values["end"] != end_txt:
+        raise RuntimeError(
+            f"Date fields did not stick. Expected {start_txt} to {end_txt}, "
+            f"but page has {values['start']} to {values['end']}"
+        )
+
     page.click("button.ra-ajax")
 
-    # Wait for results container and a row
     page.wait_for_selector("#availability-results", timeout=30000)
-    page.wait_for_selector("#availability-results table tbody tr", timeout=30000)
+    page.wait_for_selector("#availability-results table tbody tr", timeout=80000)
 
-    # Expand all “See more” within results
     see_more = page.locator("#availability-results :text('See more')")
     for i in range(see_more.count()):
         try:
             see_more.nth(i).click(timeout=1000)
         except Exception:
             pass
+
     page.wait_for_timeout(800)
 
 def extract_from_results(page, start_date: Optional[date], end_date: Optional[date]) -> List[Dict]:
