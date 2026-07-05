@@ -3,7 +3,7 @@ name: Refresh Mike Ball Availability
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 8 * * *"
+    - cron: "7 8 * * *"
       timezone: "Australia/Sydney"
 
 permissions:
