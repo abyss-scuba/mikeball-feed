@@ -104,43 +104,59 @@ def fmt_picker(d: date) -> str:
     """
     return d.strftime("%A %d %B %Y")
 
-def perform_search(page, start_d: date, end_d: date):
-    """
-    Open the page, fill Start/End dates, set expedition = ALL, click Search,
-    wait for results, expand all 'See more' so cabin tables render.
-    """
+def perform_search(page: Page, ctx: BrowserContext, start_d: date, end_d: date):
     page.goto(SOURCE_URL, wait_until="domcontentloaded")
     page.wait_for_timeout(2500)
+    _ensure_consent(page)
 
     start_txt = fmt_picker(start_d)
     end_txt = fmt_picker(end_d)
 
-    # Set fields directly and trigger the events the Resco form expects.
     page.evaluate(
         """({startTxt, endTxt}) => {
-            function setDate(selector, value) {
-                const el = document.querySelector(selector);
-                if (!el) throw new Error(selector + " not found");
-                el.value = value;
-                el.setAttribute("value", value);
-                ["input", "change", "blur"].forEach(name => {
-                    el.dispatchEvent(new Event(name, { bubbles: true }));
+            function fire(el) {
+                ["input", "change", "keyup", "blur"].forEach(ev => {
+                    el.dispatchEvent(new Event(ev, { bubbles: true, cancelable: true }));
                 });
                 if (window.jQuery) {
-                    window.jQuery(el).val(value).trigger("input").trigger("change").trigger("blur");
+                    window.jQuery(el).val(el.value)
+                        .trigger("input")
+                        .trigger("change")
+                        .trigger("keyup")
+                        .trigger("blur");
                 }
             }
 
-            setDate("#starts_at", startTxt);
-            setDate("#ends_at", endTxt);
+            document.querySelectorAll(".dtp").forEach(el => {
+                el.style.display = "none";
+                el.classList.add("hidden");
+            });
+
+            const start = document.querySelector("#starts_at");
+            const end = document.querySelector("#ends_at");
+
+            if (!start) throw new Error("Start date input #starts_at not found");
+            if (!end) throw new Error("End date input #ends_at not found");
+
+            start.value = startTxt;
+            start.setAttribute("value", startTxt);
+            fire(start);
+
+            end.value = endTxt;
+            end.setAttribute("value", endTxt);
+            fire(end);
+
+            const hiddenName = document.querySelector("input[type='hidden'][name='name']");
+            if (hiddenName) {
+                hiddenName.value = "all";
+                hiddenName.setAttribute("value", "all");
+            }
 
             const select = document.querySelector("select[name='name']");
             if (select) {
                 select.value = "all";
                 select.dispatchEvent(new Event("change", { bubbles: true }));
-                if (window.jQuery) {
-                    window.jQuery(select).val("all").trigger("change");
-                }
+                if (window.jQuery) window.jQuery(select).val("all").trigger("change");
             }
 
             const hide = document.querySelector("input[name='hide_unavailable']");
@@ -154,11 +170,11 @@ def perform_search(page, start_d: date, end_d: date):
 
     page.wait_for_timeout(500)
 
-    # Fail early if the date fields did not stick.
     values = page.evaluate(
         """() => ({
             start: document.querySelector("#starts_at")?.value || "",
-            end: document.querySelector("#ends_at")?.value || ""
+            end: document.querySelector("#ends_at")?.value || "",
+            expedition: document.querySelector("select[name='name']")?.value || ""
         })"""
     )
 
@@ -170,18 +186,17 @@ def perform_search(page, start_d: date, end_d: date):
 
     page.click("button.ra-ajax")
 
-    page.wait_for_selector("#availability-results", timeout=30000)
-    page.wait_for_selector("#availability-results table tbody tr", timeout=80000)
+    _wait_results_dom(page, timeout_ms=80000)
 
-    see_more = page.locator("#availability-results :text('See more')")
-    for i in range(see_more.count()):
-        try:
-            see_more.nth(i).click(timeout=1000)
-        except Exception:
-            pass
+    for sel in ("#availability-results >> text=See more", "#availability-results :text('See more')"):
+        btns = page.locator(sel)
+        for i in range(btns.count()):
+            try:
+                btns.nth(i).click(timeout=800)
+            except Exception:
+                pass
 
-    page.wait_for_timeout(800)
-
+    page.wait_for_timeout(400)
 def extract_from_results(page, start_date: Optional[date], end_date: Optional[date]) -> List[Dict]:
     """
     Parse the summary rows and the immediate details (cabins) row if present.
