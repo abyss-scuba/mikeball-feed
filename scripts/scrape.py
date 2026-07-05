@@ -1,14 +1,15 @@
-TEMPORARY DEBUG scraper for Mike Ball availability.
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-Purpose:
-  This version is designed to discover how Mike Ball's RESCO availability
-  widget submits its AJAX request. It loads the page, captures the RESCO
-  JavaScript details, prints them to the GitHub Actions log, saves debug files,
-  and then stops on purpose.
+# TEMPORARY DEBUG scraper for Mike Ball availability.
+#
+# Purpose:
+#   Discover how Mike Ball's RESCO availability widget submits its AJAX request.
+#   This script intentionally fails after printing RESCO DEBUG START/END.
+#
+# Use:
+#   python scripts/scrape.py --window --out mikeball_availability.json --headful
 
-Use:
-  python scripts/scrape.py --window --out mikeball_availability.json --headful
-"""
 
 import argparse
 import json
