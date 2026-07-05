@@ -106,25 +106,47 @@ def fmt_picker(d: date) -> str:
 
 def perform_search(page: Page, ctx: BrowserContext, start_d: date, end_d: date):
     page.goto(SOURCE_URL, wait_until="domcontentloaded")
-    page.wait_for_timeout(2500)
+    page.wait_for_timeout(3000)
     _ensure_consent(page)
 
-    start_txt = fmt_picker(start_d)
-    end_txt = fmt_picker(end_d)
-
     page.evaluate(
-        """({startTxt, endTxt}) => {
+        """({sy, sm, sd, ey, em, ed}) => {
+            if (window.moment) {
+                window.moment.locale("en");
+            }
+
             function fire(el) {
                 ["input", "change", "keyup", "blur"].forEach(ev => {
                     el.dispatchEvent(new Event(ev, { bubbles: true, cancelable: true }));
                 });
+            }
+
+            function setPicker(selector, y, m, d) {
+                const el = document.querySelector(selector);
+                if (!el) throw new Error(selector + " not found");
+
+                const mo = window.moment ? window.moment([y, m, d]).locale("en") : null;
+                const text = mo ? mo.format("dddd DD MMMM YYYY") : "";
+
                 if (window.jQuery) {
-                    window.jQuery(el).val(el.value)
+                    const $el = window.jQuery(el);
+
+                    try {
+                        if ($el.bootstrapMaterialDatePicker && mo) {
+                            $el.bootstrapMaterialDatePicker("setDate", mo);
+                        }
+                    } catch (e) {}
+
+                    $el.val(text)
                         .trigger("input")
                         .trigger("change")
                         .trigger("keyup")
                         .trigger("blur");
                 }
+
+                el.value = text;
+                el.setAttribute("value", text);
+                fire(el);
             }
 
             document.querySelectorAll(".dtp").forEach(el => {
@@ -132,31 +154,22 @@ def perform_search(page: Page, ctx: BrowserContext, start_d: date, end_d: date):
                 el.classList.add("hidden");
             });
 
-            const start = document.querySelector("#starts_at");
-            const end = document.querySelector("#ends_at");
-
-            if (!start) throw new Error("Start date input #starts_at not found");
-            if (!end) throw new Error("End date input #ends_at not found");
-
-            start.value = startTxt;
-            start.setAttribute("value", startTxt);
-            fire(start);
-
-            end.value = endTxt;
-            end.setAttribute("value", endTxt);
-            fire(end);
-
-            const hiddenName = document.querySelector("input[type='hidden'][name='name']");
-            if (hiddenName) {
-                hiddenName.value = "all";
-                hiddenName.setAttribute("value", "all");
-            }
+            setPicker("#starts_at", sy, sm, sd);
+            setPicker("#ends_at", ey, em, ed);
 
             const select = document.querySelector("select[name='name']");
             if (select) {
                 select.value = "all";
                 select.dispatchEvent(new Event("change", { bubbles: true }));
-                if (window.jQuery) window.jQuery(select).val("all").trigger("change");
+                if (window.jQuery) {
+                    window.jQuery(select).val("all").trigger("change");
+                }
+            }
+
+            const hiddenName = document.querySelector("input[type='hidden'][name='name']");
+            if (hiddenName) {
+                hiddenName.value = "all";
+                hiddenName.setAttribute("value", "all");
             }
 
             const hide = document.querySelector("input[name='hide_unavailable']");
@@ -165,26 +178,47 @@ def perform_search(page: Page, ctx: BrowserContext, start_d: date, end_d: date):
                 hide.dispatchEvent(new Event("change", { bubbles: true }));
             }
         }""",
-        {"startTxt": start_txt, "endTxt": end_txt}
+        {
+            "sy": start_d.year,
+            "sm": start_d.month - 1,
+            "sd": start_d.day,
+            "ey": end_d.year,
+            "em": end_d.month - 1,
+            "ed": end_d.day,
+        }
     )
 
-    page.wait_for_timeout(500)
+    page.wait_for_timeout(1000)
 
     values = page.evaluate(
         """() => ({
             start: document.querySelector("#starts_at")?.value || "",
             end: document.querySelector("#ends_at")?.value || "",
-            expedition: document.querySelector("select[name='name']")?.value || ""
+            body: document.body.innerText || ""
         })"""
     )
 
-    if values["start"] != start_txt or values["end"] != end_txt:
-        raise RuntimeError(
-            f"Date fields did not stick. Expected {start_txt} to {end_txt}, "
-            f"but page has {values['start']} to {values['end']}"
-        )
+    print("Date fields before search:", values["start"], "to", values["end"])
 
     page.click("button.ra-ajax")
+    page.wait_for_timeout(2500)
+
+    after = page.evaluate(
+        """() => ({
+            start: document.querySelector("#starts_at")?.value || "",
+            end: document.querySelector("#ends_at")?.value || "",
+            body: document.body.innerText || ""
+        })"""
+    )
+
+    print("Date fields after search:", after["start"], "to", after["end"])
+
+    if "Enter a valid start date" in after["body"] or "Enter a valid end date" in after["body"]:
+        raise RuntimeError(
+            "Mike Ball form rejected the date fields. "
+            f"Before search: {values['start']} to {values['end']}. "
+            f"After search: {after['start']} to {after['end']}."
+        )
 
     _wait_results_dom(page, timeout_ms=80000)
 
