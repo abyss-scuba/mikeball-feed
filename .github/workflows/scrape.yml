@@ -1,9 +1,10 @@
 name: Refresh Mike Ball Availability
 
 on:
-  workflow_dispatch:        # allow manual runs from the Actions tab
+  workflow_dispatch:
   schedule:
-    - cron: "10 16 * * 0"   # every Sunday 16:10 UTC (Monday morning Sydney)
+    - cron: "0 8 * * *"
+      timezone: "Australia/Sydney"
 
 jobs:
   scrape:
@@ -25,7 +26,7 @@ jobs:
           python -m playwright install chromium
           npx --yes playwright install-deps chromium
 
-      - name: Run scraper (rolling 4–26 weeks window)
+      - name: Run scraper rolling 4–26 weeks window
         run: |
           python scripts/scrape.py --window --out mikeball_availability.json
 
@@ -35,7 +36,7 @@ jobs:
           ls -l mikeball_availability.json
           head -n 40 mikeball_availability.json || true
 
-      - name: Commit & push if changed
+      - name: Commit and push if changed
         uses: EndBug/add-and-commit@v9
         with:
           add: "mikeball_availability.json"
