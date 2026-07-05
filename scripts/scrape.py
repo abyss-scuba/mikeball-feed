@@ -1,35 +1,39 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# TEMPORARY DEBUG scraper for Mike Ball availability.
-#
-# Purpose:
-#   Discover how Mike Ball's RESCO availability widget submits its AJAX request.
-#   This script intentionally fails after printing RESCO DEBUG START/END.
-#
-# Use:
-#   python scripts/scrape.py --window --out mikeball_availability.json --headful
+"""
+Mike Ball availability scraper.
 
+This version bypasses the visible date-picker and calls the same WordPress
+admin-ajax endpoint used by Mike Ball's RESCO availability widget.
+
+It was written because the visible fields can show correct dates while the
+front-end widget still rejects them via its internal datepicker state.
+
+Usage:
+  python scripts/scrape.py --window --out mikeball_availability.json --headful
+  python scripts/scrape.py --start 2026-08-02 --end 2027-01-03 --out mikeball_availability.json --headful
+"""
 
 import argparse
 import json
 import re
 import sys
 from datetime import date, datetime, timedelta
-from typing import Optional, List, Dict, Any
+from typing import Any, Dict, List, Optional, Tuple
 
-from playwright.sync_api import sync_playwright, BrowserContext, Page
+from playwright.sync_api import BrowserContext, Page, sync_playwright
 
 SOURCE_URL = "https://www.mikeball.com/availability-mike-ball-dive-expeditions/"
-LAST_DEBUG: Dict[str, Any] = {}
+DEFAULT_AJAX_URL = "https://www.mikeball.com/wp-admin/admin-ajax.php"
 
 
-# ====================== Basic helpers ======================
+# -------------------- text/date helpers --------------------
 
 def parse_money_to_int(s: Optional[str]) -> Optional[int]:
     if not s:
         return None
-    v = re.sub(r"[^\d.]", "", s)
+    v = re.sub(r"[^\d.]", "", str(s))
     if not v:
         return None
     try:
@@ -38,39 +42,41 @@ def parse_money_to_int(s: Optional[str]) -> Optional[int]:
         return None
 
 
-def to_date_obj(txt: str) -> Optional[date]:
-    if not txt:
-        return None
-    clean = re.sub(r"^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)\s+", "", txt.strip(), flags=re.I)
-    for fmt in ("%d %b %Y", "%d %B %Y"):
-        try:
-            return datetime.strptime(clean, fmt).date()
-        except ValueError:
-            pass
-    return None
-
-
-def norm_availability(s: str) -> str:
-    t = (s or "").strip().lower()
-    if "sold" in t:
-        return "Sold Out"
-    if "hurry" in t or "few" in t:
-        return "Few left"
-    if "10+" in t or "avail" in t:
-        return "Available"
-    return s.strip() if s else "—"
-
-
-def extract_int_in_text(s: str) -> Optional[int]:
+def extract_int_in_text(s: Optional[str]) -> Optional[int]:
     if not s:
         return None
-    m = re.search(r"\d+", s)
+    m = re.search(r"\d+", str(s))
     if not m:
         return None
     try:
         return int(m.group())
     except Exception:
         return None
+
+
+def to_date_obj(txt: str) -> Optional[date]:
+    if not txt:
+        return None
+
+    clean = re.sub(
+        r"^(Mon|Tue|Wed|Thu|Fri|Sat|Sun|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday)\s+",
+        "",
+        txt.strip(),
+        flags=re.I,
+    )
+
+    for fmt in ("%d %b %Y", "%d %B %Y"):
+        try:
+            return datetime.strptime(clean, fmt).date()
+        except ValueError:
+            pass
+
+    return None
+
+
+def fmt_picker(d: date) -> str:
+    # The RESCO script sends this exact human-readable format to admin-ajax.
+    return d.strftime("%A %d %B %Y")
 
 
 def within_window(d: Optional[date], start: Optional[date], end: Optional[date]) -> bool:
@@ -83,14 +89,22 @@ def within_window(d: Optional[date], start: Optional[date], end: Optional[date])
     return True
 
 
-def fmt_picker(d: date) -> str:
-    return d.strftime("%A %d %B %Y")
+def norm_availability(s: Optional[str]) -> str:
+    t = (s or "").strip().lower()
+    if not t:
+        return "—"
+    if "sold" in t:
+        return "Sold Out"
+    if "hurry" in t or "few" in t:
+        return "Few left"
+    if "10+" in t or "avail" in t:
+        return "Available"
+    return (s or "").strip()
 
 
-# ====================== Page/debug helpers ======================
+# -------------------- HTTP / AJAX helpers --------------------
 
 def _ensure_consent(page: Page) -> None:
-    """Click common cookie/consent buttons if they appear."""
     for sel in [
         "button:has-text('Accept')",
         "button:has-text('I agree')",
@@ -102,212 +116,280 @@ def _ensure_consent(page: Page) -> None:
             btns = page.locator(sel)
             if btns.count():
                 btns.first.click(timeout=800)
-                page.wait_for_timeout(300)
+                page.wait_for_timeout(250)
         except Exception:
             pass
 
 
-def _safe_text_response(ctx: BrowserContext, url: str, limit: int = 60000) -> Dict[str, Any]:
-    """Fetch a text asset using Playwright's request context, bypassing browser CORS."""
+def _get_ajax_url(page: Page) -> str:
     try:
-        response = ctx.request.get(url, timeout=30000)
-        text = response.text() if response.ok else ""
-        return {
-            "url": url,
-            "status": response.status,
-            "ok": response.ok,
-            "contentType": response.headers.get("content-type", ""),
-            "textPreview": text[:limit],
-            "textLength": len(text),
-        }
+        ajax_url = page.evaluate(
+            "() => window.rescoAjax && window.rescoAjax.ajaxurl ? window.rescoAjax.ajaxurl : null"
+        )
+        if ajax_url:
+            return str(ajax_url)
+    except Exception:
+        pass
+    return DEFAULT_AJAX_URL
+
+
+def _post_ajax(ctx: BrowserContext, ajax_url: str, form: Dict[str, str]) -> Dict[str, Any]:
+    response = ctx.request.post(
+        ajax_url,
+        form=form,
+        headers={
+            "X-Requested-With": "XMLHttpRequest",
+            "Referer": SOURCE_URL,
+            "Origin": "https://www.mikeball.com",
+            "Accept": "application/json, text/javascript, */*; q=0.01",
+        },
+        timeout=60000,
+    )
+
+    text = response.text()
+
+    if not response.ok:
+        raise RuntimeError(
+            f"AJAX request failed with HTTP {response.status}. "
+            f"Response preview: {text[:1000]}"
+        )
+
+    try:
+        return response.json()
+    except Exception:
+        try:
+            return json.loads(text)
+        except Exception as exc:
+            raise RuntimeError(
+                "AJAX response was not JSON. "
+                f"Response preview: {text[:1500]}"
+            ) from exc
+
+
+def search_availability(
+    ctx: BrowserContext,
+    ajax_url: str,
+    start_d: date,
+    end_d: date,
+    expedition: str = "all",
+) -> str:
+    start_txt = fmt_picker(start_d)
+    end_txt = fmt_picker(end_d)
+
+    payload = {
+        "action": "ra_search_availability",
+        "data[name]": expedition,
+        "data[starts_at]": start_txt,
+        "data[ends_at]": end_txt,
+    }
+
+    data = _post_ajax(ctx, ajax_url, payload)
+
+    if data.get("success") and data.get("html"):
+        return str(data["html"])
+
+    if data.get("errors"):
+        raise RuntimeError(f"Mike Ball returned validation errors: {data['errors']}")
+
+    raise RuntimeError(f"Unexpected Mike Ball search response: {json.dumps(data)[:2000]}")
+
+
+def expand_berths(ctx: BrowserContext, ajax_url: str, depart_id: str) -> Dict[str, Any]:
+    if not depart_id:
+        return {}
+
+    payload = {
+        "action": "ra_expand_berths",
+        "data[id]": str(depart_id),
+    }
+
+    try:
+        return _post_ajax(ctx, ajax_url, payload)
     except Exception as exc:
-        return {
-            "url": url,
-            "error": repr(exc),
-        }
+        # A single cabin-detail failure should not kill the whole feed.
+        print(f"Warning: could not expand berths for departure {depart_id}: {exc}", file=sys.stderr)
+        return {}
 
 
-def _capture_resco_debug(page: Page, ctx: BrowserContext) -> Dict[str, Any]:
-    """Capture enough information to determine the RESCO AJAX action and payload."""
-    debug = page.evaluate(
+# -------------------- HTML parsing via Playwright DOM --------------------
+
+def _extract_summary_rows(page: Page, html: str) -> List[Dict[str, Any]]:
+    page.set_content(
+        "<!doctype html><html><body><div id='availability-results'>"
+        + html
+        + "</div></body></html>",
+        wait_until="domcontentloaded",
+    )
+
+    return page.evaluate(
         """
         () => {
-          function safeString(fn, limit) {
-            try { return String(fn).slice(0, limit || 12000); }
-            catch (e) { return 'stringify failed: ' + e.message; }
-          }
+          const rows = [];
+          document.querySelectorAll('#availability-results table tbody tr').forEach((tr) => {
+            if (tr.classList.contains('berth-row')) return;
 
-          const resco = window.RESCO || null;
-          const rescoKeys = resco ? Object.getOwnPropertyNames(resco) : [];
-          const rescoFunctions = {};
+            const cells = Array.from(tr.children)
+              .filter(el => el.tagName === 'TD')
+              .map(td => (td.innerText || '').replace(/\\s+/g, ' ').trim());
 
-          if (resco) {
-            rescoKeys.forEach(k => {
-              try {
-                if (typeof resco[k] === 'function') {
-                  rescoFunctions[k] = safeString(resco[k], 20000);
-                } else {
-                  rescoFunctions[k] = {
-                    type: typeof resco[k],
-                    value: JSON.stringify(resco[k]).slice(0, 4000)
-                  };
-                }
-              } catch (e) {
-                rescoFunctions[k] = 'capture failed: ' + e.message;
-              }
+            if (cells.length < 3) return;
+
+            rows.push({
+              id: tr.getAttribute('data-id') || tr.dataset.id || '',
+              dataDate: tr.getAttribute('data-date') || tr.dataset.date || '',
+              className: tr.className || '',
+              cells: cells,
+              availabilityText: tr.querySelector('.depart-avail')
+                ? tr.querySelector('.depart-avail').innerText.replace(/\\s+/g, ' ').trim()
+                : ''
             });
-          }
-
-          const allScripts = Array.from(document.scripts).map(s => ({
-            id: s.id || '',
-            src: s.src || '',
-            textPreview: s.src ? '' : (s.textContent || '').slice(0, 5000)
-          }));
-
-          const rescoScriptUrls = allScripts
-            .map(s => s.src)
-            .filter(src => /RescoApi|resco/i.test(src));
-
-          const form = document.querySelector('.resco-form');
-          const formInputs = form ? Array.from(form.querySelectorAll('input, select, button')).map(el => ({
-            tag: el.tagName,
-            type: el.getAttribute('type') || '',
-            name: el.getAttribute('name') || '',
-            id: el.id || '',
-            className: el.className || '',
-            value: el.value || '',
-            checked: !!el.checked,
-            text: (el.innerText || el.textContent || '').trim().slice(0, 300)
-          })) : [];
-
-          return {
-            url: location.href,
-            title: document.title,
-            hasJQuery: !!window.jQuery,
-            hasMoment: !!window.moment,
-            momentLocale: window.moment ? window.moment.locale() : null,
-            hasRESCO: !!window.RESCO,
-            rescoKeys,
-            rescoFunctions,
-            rescoAjax: window.rescoAjax || null,
-            wpAjaxUrl: window.ajaxurl || null,
-            grecaptchaPresent: !!window.grecaptcha,
-            formHtml: form ? form.outerHTML.slice(0, 12000) : 'resco form not found',
-            formInputs,
-            rescoScriptUrls,
-            allScripts,
-            availabilityResultsHtml: document.querySelector('#availability-results')
-              ? document.querySelector('#availability-results').outerHTML.slice(0, 12000)
-              : 'availability-results not found',
-            bodyTextPreview: (document.body.innerText || '').slice(0, 12000)
-          };
+          });
+          return rows;
         }
         """
     )
 
-    # Also fetch the RESCO script source, which is the most useful part.
-    fetched_scripts = []
-    for url in debug.get("rescoScriptUrls", []):
-        fetched_scripts.append(_safe_text_response(ctx, url, limit=80000))
-    debug["fetchedRescoScripts"] = fetched_scripts
 
-    return debug
-
-
-def perform_search(page: Page, ctx: BrowserContext, start_d: date, end_d: date) -> None:
+def _find_trip_fields(cells: List[str]) -> Tuple[str, str, str, str, str]:
     """
-    TEMPORARY DEBUG VERSION.
-
-    This loads the Mike Ball page, captures the RESCO widget JavaScript details,
-    prints them, and then stops intentionally. The workflow is expected to fail
-    while we inspect the printed RESCO DEBUG block.
+    Mike Ball's table may include a leading expand/control cell.
+    This finds the date cells first, then infers title/price/availability.
     """
-    global LAST_DEBUG
+    date_indices = []
+    for i, text in enumerate(cells):
+        if to_date_obj(text):
+            date_indices.append(i)
 
-    page.goto(SOURCE_URL, wait_until="domcontentloaded")
-    page.wait_for_timeout(6000)
-    _ensure_consent(page)
+    if len(date_indices) >= 2:
+        dep_i, ret_i = date_indices[0], date_indices[1]
+        title = cells[dep_i - 1] if dep_i > 0 else cells[0]
+        dep = cells[dep_i]
+        ret = cells[ret_i]
 
-    try:
-        page.wait_for_function("() => !!window.RESCO && !!window.RESCO.initAvailabilitySearch", timeout=30000)
-    except Exception:
-        # Continue anyway; the debug output will show whether RESCO loaded.
-        pass
+        price = ""
+        availability = ""
 
-    LAST_DEBUG = _capture_resco_debug(page, ctx)
+        for text in cells[ret_i + 1:]:
+            if not price and "$" in text:
+                price = text
+                continue
+            if text and text != price:
+                availability = text
 
-    print("RESCO DEBUG START")
-    print(json.dumps(LAST_DEBUG, indent=2, ensure_ascii=False))
-    print("RESCO DEBUG END")
+        if not availability and cells:
+            availability = cells[-1]
 
-    raise RuntimeError("Stopped after RESCO debug capture. This failure is intentional.")
+        return title, dep, ret, price, availability
+
+    # Fallback to the old scraper's original column assumptions.
+    if len(cells) >= 5:
+        return cells[0], cells[1], cells[2], cells[3], cells[4]
+
+    padded = cells + [""] * 5
+    return padded[0], padded[1], padded[2], padded[3], padded[4]
 
 
-# ====================== Existing parser retained for later ======================
+def _parse_cabins_from_html(page: Page, berths_html: str) -> List[Dict[str, Any]]:
+    if not berths_html:
+        return []
 
-def extract_from_results(page: Page, start_date: Optional[date], end_date: Optional[date]) -> List[Dict]:
-    trips: List[Dict] = []
-    rows = page.locator("#availability-results table tbody tr")
-    rcount = rows.count()
+    rows = page.evaluate(
+        """
+        (html) => {
+          const div = document.createElement('div');
+          div.innerHTML = html;
+          return Array.from(div.querySelectorAll('tr')).map(tr =>
+            Array.from(tr.children)
+              .filter(el => ['TD', 'TH'].includes(el.tagName))
+              .map(td => (td.innerText || '').replace(/\\s+/g, ' ').trim())
+              .filter(Boolean)
+          ).filter(row => row.length);
+        }
+        """,
+        berths_html,
+    )
 
-    i = 0
-    while i < rcount:
-        tr = rows.nth(i)
-        cells = tr.locator("td")
-        if cells.count() >= 5:
-            title = cells.nth(0).inner_text().strip()
-            dep = cells.nth(1).inner_text().strip()
-            ret = cells.nth(2).inner_text().strip()
-            price = cells.nth(3).inner_text().strip()
-            av = cells.nth(4).inner_text().strip()
+    cabins: List[Dict[str, Any]] = []
+    for row in rows:
+        if not row:
+            continue
 
-            d = to_date_obj(dep)
-            if within_window(d, start_date, end_date):
-                cabins: List[Dict] = []
-                cabins_left = None
+        joined = " ".join(row).lower()
+        if "cabin type" in joined or "berth" in row[0].lower() and "left" in joined:
+            continue
 
-                if i + 1 < rcount:
-                    nxt = rows.nth(i + 1)
-                    text = nxt.inner_text().lower()
-                    if "cabin type" in text or "berths left" in text:
-                        tbl = nxt.locator("table:has-text('Cabin Type')")
-                        if tbl.count():
-                            body_rows = tbl.nth(0).locator("tbody tr")
-                            for ri in range(body_rows.count()):
-                                tds = body_rows.nth(ri).locator("td").all_inner_texts()
-                                if len(tds) >= 3:
-                                    cabins.append({
-                                        "type": tds[0].strip(),
-                                        "available": extract_int_in_text(tds[1]),
-                                        "priceAUD": parse_money_to_int(tds[2]),
-                                    })
-                            cabins_left = sum((c["available"] or 0) for c in cabins) if cabins else None
-                        i += 1
+        if len(row) >= 3:
+            cabins.append(
+                {
+                    "type": row[0],
+                    "available": extract_int_in_text(row[1]),
+                    "priceAUD": parse_money_to_int(row[2]),
+                }
+            )
 
-                trips.append({
-                    "title": title,
-                    "dateText": dep,
-                    "dateReturn": ret,
-                    "priceFromAUD": parse_money_to_int(price),
-                    "availability": norm_availability(av),
-                    "cabinsLeft": cabins_left,
-                    "link": SOURCE_URL,
-                    "cabins": cabins,
-                })
-        i += 1
+    return cabins
+
+
+def extract_trips(
+    page: Page,
+    ctx: BrowserContext,
+    ajax_url: str,
+    html: str,
+    start_date: Optional[date],
+    end_date: Optional[date],
+) -> List[Dict[str, Any]]:
+    summary_rows = _extract_summary_rows(page, html)
+    trips: List[Dict[str, Any]] = []
+
+    for row in summary_rows:
+        cells = row.get("cells", [])
+        title, dep, ret, price, availability = _find_trip_fields(cells)
+        dep_date = to_date_obj(dep)
+
+        if not within_window(dep_date, start_date, end_date):
+            continue
+
+        depart_id = str(row.get("id") or "")
+        cabins: List[Dict[str, Any]] = []
+        cabins_left: Optional[int] = None
+
+        if depart_id:
+            berth_response = expand_berths(ctx, ajax_url, depart_id)
+            cabins = _parse_cabins_from_html(page, str(berth_response.get("berths", "")))
+
+            if cabins:
+                cabins_left = sum((c.get("available") or 0) for c in cabins)
+
+            if berth_response.get("avail") not in (None, ""):
+                availability = str(berth_response.get("avail"))
+
+        trips.append(
+            {
+                "title": title,
+                "dateText": dep,
+                "dateReturn": ret,
+                "priceFromAUD": parse_money_to_int(price),
+                "availability": norm_availability(availability or row.get("availabilityText")),
+                "cabinsLeft": cabins_left,
+                "link": SOURCE_URL,
+                "cabins": cabins,
+                "sourceId": depart_id,
+            }
+        )
 
     trips.sort(key=lambda t: to_date_obj(t.get("dateText", "")) or date(1900, 1, 1))
     return trips
 
 
-# ====================== Scraper runner ======================
+# -------------------- runner --------------------
 
-def run_scrape(start_date: date, end_date: date, headful: bool = False) -> Dict:
+def run_scrape(start_date: date, end_date: date, headful: bool = False) -> Dict[str, Any]:
     with sync_playwright() as p:
         browser = p.chromium.launch(
             headless=not headful,
             args=["--disable-blink-features=AutomationControlled"],
         )
+
         ctx = browser.new_context(
             locale="en-AU",
             timezone_id="Australia/Brisbane",
@@ -318,31 +400,41 @@ def run_scrape(start_date: date, end_date: date, headful: bool = False) -> Dict:
             ),
             viewport={"width": 1440, "height": 1600},
         )
+
         page = ctx.new_page()
         page.set_default_timeout(30000)
 
         try:
-            perform_search(page, ctx, start_date, end_date)
-            trips = extract_from_results(page, start_date, end_date)
+            page.goto(SOURCE_URL, wait_until="domcontentloaded")
+            page.wait_for_timeout(4000)
+            _ensure_consent(page)
+
+            ajax_url = _get_ajax_url(page)
+            html = search_availability(ctx, ajax_url, start_date, end_date, "all")
+            trips = extract_trips(page, ctx, ajax_url, html, start_date, end_date)
+
+            # Helpful debug files even on success.
+            page.set_content(
+                "<!doctype html><html><body><div id='availability-results'>"
+                + html
+                + "</div></body></html>",
+                wait_until="domcontentloaded",
+            )
         except Exception as exc:
             try:
                 page.screenshot(path="debug_screen.png", full_page=True)
-
-                page_html = page.content()
-                debug_comment = "\n\n<!-- RESCO_DEBUG_JSON_START\n" + json.dumps(
-                    LAST_DEBUG,
-                    indent=2,
-                    ensure_ascii=False,
-                ) + "\nRESCO_DEBUG_JSON_END -->\n"
-
                 with open("debug_page.html", "w", encoding="utf-8") as f:
-                    f.write(page_html)
-                    f.write(debug_comment)
-
+                    try:
+                        f.write(page.content())
+                    except Exception:
+                        f.write("")
+                    f.write("\n\n<!-- scraper_error:\n")
+                    f.write(str(exc))
+                    f.write("\n-->\n")
                 print("❌ Error; saved debug_screen.png and debug_page.html")
-            except Exception as save_exc:
-                print(f"Could not save debug files: {save_exc}", file=sys.stderr)
-            raise exc
+            except Exception:
+                pass
+            raise
         finally:
             ctx.close()
             browser.close()
@@ -354,10 +446,10 @@ def run_scrape(start_date: date, end_date: date, headful: bool = False) -> Dict:
     }
 
 
-# ====================== CLI ======================
+# -------------------- CLI --------------------
 
-def parse_args():
-    ap = argparse.ArgumentParser(description="Debug Mike Ball RESCO availability widget.")
+def parse_args() -> argparse.Namespace:
+    ap = argparse.ArgumentParser(description="Scrape Mike Ball availability using RESCO admin-ajax.")
     ap.add_argument("--start", help="Start date YYYY-MM-DD")
     ap.add_argument("--end", help="End date YYYY-MM-DD")
     ap.add_argument(
@@ -381,7 +473,6 @@ def main() -> None:
             print("Dates must be YYYY-MM-DD", file=sys.stderr)
             sys.exit(1)
     else:
-        # Default to rolling window, even if --window was omitted.
         today = date.today()
         start_d = today + timedelta(days=28)
         end_d = today + timedelta(days=182)
