@@ -104,133 +104,75 @@ def fmt_picker(d: date) -> str:
     """
     return d.strftime("%A %d %B %Y")
 
-def perform_search(page: Page, ctx: BrowserContext, start_d: date, end_d: date):
-    page.goto(SOURCE_URL, wait_until="domcontentloaded")
-    page.wait_for_timeout(3000)
-    _ensure_consent(page)
+def _select_material_date(page, input_selector: str, target_d: date):
+    """
+    Select a date through the visible Material date picker, instead of typing into
+    the input. Mike Ball validates the picker state, not just the visible text.
+    """
+    month_map = {
+        "JAN": 1, "FEB": 2, "FÉV": 2, "FEV": 2,
+        "MAR": 3, "APR": 4, "AVR": 4,
+        "MAY": 5, "MAI": 5,
+        "JUN": 6, "JUI": 6,
+        "JUL": 7, "JUIL": 7,
+        "AUG": 8, "AOÛ": 8, "AOU": 8,
+        "SEP": 9, "OCT": 10, "NOV": 11,
+        "DEC": 12, "DÉC": 12
+    }
 
-    page.evaluate(
-        """({sy, sm, sd, ey, em, ed}) => {
-            if (window.moment) {
-                window.moment.locale("en");
-            }
+    page.click(input_selector)
+    page.wait_for_timeout(300)
 
-            function fire(el) {
-                ["input", "change", "keyup", "blur"].forEach(ev => {
-                    el.dispatchEvent(new Event(ev, { bubbles: true, cancelable: true }));
-                });
-            }
+    dtp_id = page.locator(input_selector).get_attribute("data-dtp")
+    if not dtp_id:
+        raise RuntimeError(f"No data-dtp datepicker id found for {input_selector}")
 
-            function setPicker(selector, y, m, d) {
-                const el = document.querySelector(selector);
-                if (!el) throw new Error(selector + " not found");
-
-                const mo = window.moment ? window.moment([y, m, d]).locale("en") : null;
-                const text = mo ? mo.format("dddd DD MMMM YYYY") : "";
-
-                if (window.jQuery) {
-                    const $el = window.jQuery(el);
-
-                    try {
-                        if ($el.bootstrapMaterialDatePicker && mo) {
-                            $el.bootstrapMaterialDatePicker("setDate", mo);
-                        }
-                    } catch (e) {}
-
-                    $el.val(text)
-                        .trigger("input")
-                        .trigger("change")
-                        .trigger("keyup")
-                        .trigger("blur");
-                }
-
-                el.value = text;
-                el.setAttribute("value", text);
-                fire(el);
-            }
-
-            document.querySelectorAll(".dtp").forEach(el => {
-                el.style.display = "none";
-                el.classList.add("hidden");
-            });
-
-            setPicker("#starts_at", sy, sm, sd);
-            setPicker("#ends_at", ey, em, ed);
-
-            const select = document.querySelector("select[name='name']");
-            if (select) {
-                select.value = "all";
-                select.dispatchEvent(new Event("change", { bubbles: true }));
-                if (window.jQuery) {
-                    window.jQuery(select).val("all").trigger("change");
-                }
-            }
-
-            const hiddenName = document.querySelector("input[type='hidden'][name='name']");
-            if (hiddenName) {
-                hiddenName.value = "all";
-                hiddenName.setAttribute("value", "all");
-            }
-
-            const hide = document.querySelector("input[name='hide_unavailable']");
-            if (hide) {
-                hide.checked = false;
-                hide.dispatchEvent(new Event("change", { bubbles: true }));
-            }
+    page.wait_for_function(
+        """id => {
+            const el = document.getElementById(id);
+            return el && !el.classList.contains("hidden") && getComputedStyle(el).display !== "none";
         }""",
-        {
-            "sy": start_d.year,
-            "sm": start_d.month - 1,
-            "sd": start_d.day,
-            "ey": end_d.year,
-            "em": end_d.month - 1,
-            "ed": end_d.day,
-        }
+        dtp_id,
+        timeout=5000
     )
 
-    page.wait_for_timeout(1000)
+    picker = f"#{dtp_id}"
 
-    values = page.evaluate(
-        """() => ({
-            start: document.querySelector("#starts_at")?.value || "",
-            end: document.querySelector("#ends_at")?.value || "",
-            body: document.body.innerText || ""
-        })"""
-    )
+    for _ in range(36):
+        month_label = page.locator(f"{picker} .dtp-actual-month").inner_text().strip().upper()
+        year_text = page.locator(f"{picker} .dtp-actual-year").inner_text().strip()
 
-    print("Date fields before search:", values["start"], "to", values["end"])
+        month_key = month_label[:4] if month_label[:4] in month_map else month_label[:3]
+        current_month = month_map.get(month_key)
+        current_year_match = re.search(r"\d{4}", year_text)
 
-    page.click("button.ra-ajax")
-    page.wait_for_timeout(2500)
+        if not current_month or not current_year_match:
+            raise RuntimeError(f"Could not read datepicker month/year: {month_label} {year_text}")
 
-    after = page.evaluate(
-        """() => ({
-            start: document.querySelector("#starts_at")?.value || "",
-            end: document.querySelector("#ends_at")?.value || "",
-            body: document.body.innerText || ""
-        })"""
-    )
+        current_year = int(current_year_match.group(0))
+        diff_months = (target_d.year - current_year) * 12 + (target_d.month - current_month)
 
-    print("Date fields after search:", after["start"], "to", after["end"])
+        if diff_months == 0:
+            break
 
-    if "Enter a valid start date" in after["body"] or "Enter a valid end date" in after["body"]:
-        raise RuntimeError(
-            "Mike Ball form rejected the date fields. "
-            f"Before search: {values['start']} to {values['end']}. "
-            f"After search: {after['start']} to {after['end']}."
-        )
+        if diff_months > 0:
+            page.click(f"{picker} .dtp-select-month-after")
+        else:
+            page.click(f"{picker} .dtp-select-month-before")
 
-    _wait_results_dom(page, timeout_ms=80000)
+        page.wait_for_timeout(150)
+    else:
+        raise RuntimeError(f"Could not navigate datepicker to {target_d.isoformat()}")
 
-    for sel in ("#availability-results >> text=See more", "#availability-results :text('See more')"):
-        btns = page.locator(sel)
-        for i in range(btns.count()):
-            try:
-                btns.nth(i).click(timeout=800)
-            except Exception:
-                pass
+    day = page.locator(f"{picker} td[data-date='{target_d.day}'] a.dtp-select-day")
+    if day.count() == 0:
+        day = page.locator(f"{picker} a.dtp-select-day", has_text=f"{target_d.day:02d}")
 
-    page.wait_for_timeout(400)
+    day.first.click()
+    page.wait_for_timeout(200)
+
+    page.click(f"{picker} button.dtp-btn-ok")
+    page.wait_for_timeout(500)
 def extract_from_results(page, start_date: Optional[date], end_date: Optional[date]) -> List[Dict]:
     """
     Parse the summary rows and the immediate details (cabins) row if present.
