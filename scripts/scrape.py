@@ -143,38 +143,96 @@ def _wait_results_dom(page: Page, timeout_ms: int = 70000) -> None:
 
 def perform_search(page: Page, ctx: BrowserContext, start_d: date, end_d: date):
     page.goto(SOURCE_URL, wait_until="domcontentloaded")
-    page.wait_for_timeout(800)
+    page.wait_for_timeout(2500)
     _ensure_consent(page)
 
-    # Fill dates (type + programmatic events)
     start_txt = fmt_picker(start_d)
-    end_txt   = fmt_picker(end_d)
-    page.fill("#starts_at", "")
-    page.type("#starts_at", start_txt, delay=3)
-    page.fill("#ends_at", "")
-    page.type("#ends_at", end_txt, delay=3)
-    _fire_input_change(page, start_txt, end_txt)
+    end_txt = fmt_picker(end_d)
 
-    # Expedition = ALL
-    try: page.select_option("select[name='name']", value="all")
-    except: pass
+    page.evaluate(
+        """({startTxt, endTxt}) => {
+            function fire(el) {
+                ["input", "change", "keyup", "blur"].forEach(ev => {
+                    el.dispatchEvent(new Event(ev, { bubbles: true, cancelable: true }));
+                });
+                if (window.jQuery) {
+                    window.jQuery(el).val(el.value)
+                        .trigger("input")
+                        .trigger("change")
+                        .trigger("keyup")
+                        .trigger("blur");
+                }
+            }
 
-    # Uncheck "Hide unavailable"
-    try:
-        box = page.locator("input[name='hide_unavailable']")
-        if box.is_checked(): box.uncheck()
-    except: pass
+            document.querySelectorAll(".dtp").forEach(el => {
+                el.style.display = "none";
+                el.classList.add("hidden");
+            });
 
-    _close_datepickers(page)
-    _submit_search_belt_and_braces(page)
+            const start = document.querySelector("#starts_at");
+            const end = document.querySelector("#ends_at");
+
+            if (!start) throw new Error("Start date input #starts_at not found");
+            if (!end) throw new Error("End date input #ends_at not found");
+
+            start.value = startTxt;
+            start.setAttribute("value", startTxt);
+            fire(start);
+
+            end.value = endTxt;
+            end.setAttribute("value", endTxt);
+            fire(end);
+
+            const hiddenName = document.querySelector("input[type='hidden'][name='name']");
+            if (hiddenName) {
+                hiddenName.value = "all";
+                hiddenName.setAttribute("value", "all");
+            }
+
+            const select = document.querySelector("select[name='name']");
+            if (select) {
+                select.value = "all";
+                select.dispatchEvent(new Event("change", { bubbles: true }));
+                if (window.jQuery) window.jQuery(select).val("all").trigger("change");
+            }
+
+            const hide = document.querySelector("input[name='hide_unavailable']");
+            if (hide) {
+                hide.checked = false;
+                hide.dispatchEvent(new Event("change", { bubbles: true }));
+            }
+        }""",
+        {"startTxt": start_txt, "endTxt": end_txt}
+    )
+
+    page.wait_for_timeout(500)
+
+    values = page.evaluate(
+        """() => ({
+            start: document.querySelector("#starts_at")?.value || "",
+            end: document.querySelector("#ends_at")?.value || "",
+            expedition: document.querySelector("select[name='name']")?.value || ""
+        })"""
+    )
+
+    if values["start"] != start_txt or values["end"] != end_txt:
+        raise RuntimeError(
+            f"Date fields did not stick. Expected {start_txt} to {end_txt}, "
+            f"but page has {values['start']} to {values['end']}"
+        )
+
+    page.click("button.ra-ajax")
+
     _wait_results_dom(page, timeout_ms=80000)
 
-    # Expand all “See more”
     for sel in ("#availability-results >> text=See more", "#availability-results :text('See more')"):
         btns = page.locator(sel)
         for i in range(btns.count()):
-            try: btns.nth(i).click(timeout=800)
-            except: pass
+            try:
+                btns.nth(i).click(timeout=800)
+            except Exception:
+                pass
+
     page.wait_for_timeout(400)
 
 def extract_from_results(page: Page, start_date: Optional[date], end_date: Optional[date]) -> List[Dict]:
