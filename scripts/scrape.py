@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
 TEMPORARY DEBUG scraper for Mike Ball availability.
 
 Purpose:
