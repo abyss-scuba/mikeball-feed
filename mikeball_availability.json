@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-07-13T23:10:24Z",
+  "scrapedAt": "2026-07-14T23:10:13Z",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "trips": [
     {
@@ -40,7 +40,7 @@
       "dateReturn": "Mon 17 Aug 2026",
       "priceFromAUD": 2835,
       "availability": "Few left",
-      "cabinsLeft": 2,
+      "cabinsLeft": 3,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
@@ -50,7 +50,7 @@
         },
         {
           "type": "Club - per person, share cabin",
-          "available": null,
+          "available": 1,
           "priceAUD": 3255
         },
         {
