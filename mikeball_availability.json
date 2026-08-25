@@ -1,39 +1,7 @@
 {
-  "scrapedAt": "2026-08-24T22:41:12Z",
+  "scrapedAt": "2026-08-25T22:42:24Z",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "trips": [
-    {
-      "title": "3 Night - Fly Dive Cod Hole",
-      "dateText": "Mon 21 Sep 2026",
-      "dateReturn": "Thu 24 Sep 2026",
-      "priceFromAUD": 2504,
-      "availability": "Sold Out",
-      "cabinsLeft": 0,
-      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
-      "cabins": [
-        {
-          "type": "Budget - per person, share cabin - shared bathroom",
-          "available": null,
-          "priceAUD": 2504
-        },
-        {
-          "type": "Club - per person, share cabin",
-          "available": null,
-          "priceAUD": 2899
-        },
-        {
-          "type": "Standard - per person, share cabin",
-          "available": null,
-          "priceAUD": 3266
-        },
-        {
-          "type": "Premium - double or queen bed, per person*",
-          "available": null,
-          "priceAUD": 3574
-        }
-      ],
-      "sourceId": "2576"
-    },
     {
       "title": "7 Night - Coral Sea Safari",
       "dateText": "Thu 24 Sep 2026",
