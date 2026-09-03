@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-09-02T00:06:40Z",
+  "scrapedAt": "2026-09-03T00:10:59Z",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "trips": [
     {
@@ -519,8 +519,8 @@
       "dateText": "Thu 17 Dec 2026",
       "dateReturn": "Thu 24 Dec 2026",
       "priceFromAUD": 4802,
-      "availability": "Few left",
-      "cabinsLeft": 1,
+      "availability": "Sold Out",
+      "cabinsLeft": 0,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
@@ -530,7 +530,7 @@
         },
         {
           "type": "Club - per person, share cabin",
-          "available": 1,
+          "available": null,
           "priceAUD": 5635
         },
         {
@@ -552,7 +552,7 @@
       "dateReturn": "Thu 24 Dec 2026",
       "priceFromAUD": 2504,
       "availability": "Few left",
-      "cabinsLeft": 4,
+      "cabinsLeft": 2,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
@@ -562,7 +562,7 @@
         },
         {
           "type": "Club - per person, share cabin",
-          "available": 2,
+          "available": null,
           "priceAUD": 2899
         },
         {
