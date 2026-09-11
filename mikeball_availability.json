@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-09-10T00:10:45Z",
+  "scrapedAt": "2026-09-11T00:06:27Z",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "trips": [
     {
@@ -929,6 +929,38 @@
         }
       ],
       "sourceId": "2600"
+    },
+    {
+      "title": "10 Night - Coral Sea Odyssey",
+      "dateText": "Fri 12 Mar 2027",
+      "dateReturn": "Mon 22 Mar 2027",
+      "priceFromAUD": 7409,
+      "availability": "Few left",
+      "cabinsLeft": 5,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        {
+          "type": "Budget - per person, share cabin - shared bathroom",
+          "available": 1,
+          "priceAUD": 7409
+        },
+        {
+          "type": "Club - per person, share cabin",
+          "available": 2,
+          "priceAUD": 8656
+        },
+        {
+          "type": "Standard - per person, share cabin",
+          "available": null,
+          "priceAUD": 9877
+        },
+        {
+          "type": "Premium - double or queen bed, per person*",
+          "available": 2,
+          "priceAUD": 10731
+        }
+      ],
+      "sourceId": "2659"
     }
   ]
 }
