@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-09-17T00:26:36Z",
+  "scrapedAt": "2026-09-18T00:13:05Z",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "trips": [
     {
@@ -520,7 +520,7 @@
       "dateReturn": "Tue 05 Jan 2027",
       "priceFromAUD": 3430,
       "availability": "Available",
-      "cabinsLeft": 5,
+      "cabinsLeft": 6,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
@@ -535,7 +535,7 @@
         },
         {
           "type": "Standard - per person, share cabin",
-          "available": 1,
+          "available": 2,
           "priceAUD": 4607
         },
         {
