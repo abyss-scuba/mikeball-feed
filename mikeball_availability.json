@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-10-14T23:54:42Z",
+  "scrapedAt": "2026-10-15T23:40:29Z",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "trips": [
     {
@@ -7,8 +7,8 @@
       "dateText": "Thu 12 Nov 2026",
       "dateReturn": "Thu 19 Nov 2026",
       "priceFromAUD": 5280,
-      "availability": "Few left",
-      "cabinsLeft": 1,
+      "availability": "Sold Out",
+      "cabinsLeft": 0,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
@@ -18,7 +18,7 @@
         },
         {
           "type": "Club - per person, share cabin",
-          "available": 1,
+          "available": null,
           "priceAUD": 6153
         },
         {
@@ -359,13 +359,13 @@
       "dateText": "Thu 31 Dec 2026",
       "dateReturn": "Tue 05 Jan 2027",
       "priceFromAUD": 3430,
-      "availability": "Few left",
-      "cabinsLeft": 2,
+      "availability": "8 - See more",
+      "cabinsLeft": 4,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
           "type": "Budget - per person, share cabin - shared bathroom",
-          "available": null,
+          "available": 2,
           "priceAUD": 3430
         },
         {
@@ -897,6 +897,38 @@
         }
       ],
       "sourceId": "2753"
+    },
+    {
+      "title": "5 night Coral Sea & Cod Hole",
+      "dateText": "Thu 15 Apr 2027",
+      "dateReturn": "Tue 20 Apr 2027",
+      "priceFromAUD": 3602,
+      "availability": "Available",
+      "cabinsLeft": 8,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        {
+          "type": "Budget - per person, share cabin - shared bathroom",
+          "available": 2,
+          "priceAUD": 3602
+        },
+        {
+          "type": "Club - per person, share cabin",
+          "available": 2,
+          "priceAUD": 4226
+        },
+        {
+          "type": "Standard - per person, share cabin",
+          "available": 2,
+          "priceAUD": 4837
+        },
+        {
+          "type": "Premium - double or queen bed, per person*",
+          "available": 2,
+          "priceAUD": 5268
+        }
+      ],
+      "sourceId": "2661"
     }
   ]
 }
