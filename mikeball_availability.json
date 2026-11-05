@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-11-04T01:18:05Z",
+  "scrapedAt": "2026-11-05T01:27:20Z",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "trips": [
     {
@@ -199,8 +199,8 @@
       "dateText": "Mon 21 Dec 2026",
       "dateReturn": "Thu 24 Dec 2026",
       "priceFromAUD": 2504,
-      "availability": "Sold Out",
-      "cabinsLeft": 0,
+      "availability": "Few left",
+      "cabinsLeft": 1,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
@@ -210,7 +210,7 @@
         },
         {
           "type": "Club - per person, share cabin",
-          "available": null,
+          "available": 1,
           "priceAUD": 2899
         },
         {
@@ -392,7 +392,7 @@
       "dateReturn": "Mon 18 Jan 2027",
       "priceFromAUD": 2835,
       "availability": "Few left",
-      "cabinsLeft": 4,
+      "cabinsLeft": 3,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
@@ -402,7 +402,7 @@
         },
         {
           "type": "Club - per person, share cabin",
-          "available": 2,
+          "available": 1,
           "priceAUD": 3255
         },
         {
@@ -961,6 +961,38 @@
         }
       ],
       "sourceId": "2669"
+    },
+    {
+      "title": "5 night GBR Ribbon Reefs",
+      "dateText": "Thu 06 May 2027",
+      "dateReturn": "Tue 11 May 2027",
+      "priceFromAUD": 3602,
+      "availability": "Available",
+      "cabinsLeft": 7,
+      "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
+      "cabins": [
+        {
+          "type": "Budget - per person, share cabin - shared bathroom",
+          "available": 1,
+          "priceAUD": 3602
+        },
+        {
+          "type": "Club - per person, share cabin",
+          "available": 2,
+          "priceAUD": 4226
+        },
+        {
+          "type": "Standard - per person, share cabin",
+          "available": 2,
+          "priceAUD": 4837
+        },
+        {
+          "type": "Premium - double or queen bed, per person*",
+          "available": 2,
+          "priceAUD": 5268
+        }
+      ],
+      "sourceId": "2670"
     }
   ]
 }
