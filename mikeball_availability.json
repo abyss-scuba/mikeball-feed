@@ -1,5 +1,5 @@
 {
-  "scrapedAt": "2026-11-10T03:30:16Z",
+  "scrapedAt": "2026-11-11T01:13:02Z",
   "source": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
   "trips": [
     {
@@ -424,12 +424,12 @@
       "dateReturn": "Thu 21 Jan 2027",
       "priceFromAUD": 2504,
       "availability": "Few left",
-      "cabinsLeft": 2,
+      "cabinsLeft": 1,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
           "type": "Budget - per person, share cabin - shared bathroom",
-          "available": 1,
+          "available": null,
           "priceAUD": 2504
         },
         {
@@ -455,8 +455,8 @@
       "dateText": "Thu 21 Jan 2027",
       "dateReturn": "Mon 25 Jan 2027",
       "priceFromAUD": 2835,
-      "availability": "10 - See more",
-      "cabinsLeft": 5,
+      "availability": "8 - See more",
+      "cabinsLeft": 4,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
@@ -466,7 +466,7 @@
         },
         {
           "type": "Club - per person, share cabin",
-          "available": 2,
+          "available": 1,
           "priceAUD": 3255
         },
         {
@@ -488,7 +488,7 @@
       "dateReturn": "Thu 28 Jan 2027",
       "priceFromAUD": 4802,
       "availability": "Few left",
-      "cabinsLeft": 2,
+      "cabinsLeft": 1,
       "link": "https://www.mikeball.com/availability-mike-ball-dive-expeditions/",
       "cabins": [
         {
@@ -498,7 +498,7 @@
         },
         {
           "type": "Club - per person, share cabin",
-          "available": 2,
+          "available": 1,
           "priceAUD": 5635
         },
         {
